@@ -28,7 +28,7 @@
 <h2>Spanish Trainer v7</h2>
 
 <label>Verbs:</label>
-<input id="verbs" value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,ivir,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,volver">
+<input id="verbs" value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,vivir,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,volver">
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
 <div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
@@ -130,24 +130,44 @@
     function renderCheckboxes(containerId, items, storageKey){
         const container = document.getElementById(containerId);
         container.innerHTML = "";
-        const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+        let saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
         items.forEach(i => {
-            const checked = !saved || saved.includes(i.v || i);
-            container.innerHTML += `<label><input type="checkbox" value="${i.v || i}" ${checked ? "checked" : ""}> ${i.l || i}</label>`;
+            const value = i.v || i;
+            const checked = saved.includes(value);
+            const label = document.createElement("label");
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = value;
+            cb.checked = checked;
+
+            // save immediately when clicked
+            cb.addEventListener("change", ()=>getSelected(containerId, storageKey));
+
+            label.appendChild(cb);
+            label.appendChild(document.createTextNode(" " + (i.l || i)));
+            container.appendChild(label);
         });
     }
+
     function getSelected(containerId, storageKey){
         const cbs = document.querySelectorAll(`#${containerId} input[type=checkbox]`);
         const selected = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
-        localStorage.setItem(storageKey, JSON.stringify(selected));
+        localStorage.setItem(storageKey, JSON.stringify(selected)); // always store array
         return selected;
     }
+
     function getSelectedVerbs() { return getSelected("verbSelector", "selectedVerbs"); }
     function getSelectedTenses() { return getSelected("tenseSelector", "selectedTenses"); }
 
-    function selectAll(containerId, storageKey){ document.querySelectorAll(`#${containerId} input`).forEach(cb=>cb.checked=true); getSelected(containerId,storageKey); }
-    function selectNone(containerId, storageKey){ document.querySelectorAll(`#${containerId} input`).forEach(cb=>cb.checked=false); getSelected(containerId,storageKey); }
+    function selectAll(containerId, storageKey){
+        document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = true);
+        getSelected(containerId, storageKey);
+    }
 
+    function selectNone(containerId, storageKey){
+        document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = false);
+        getSelected(containerId, storageKey);
+    }
     function toggleVerbSelector(){
         const c = document.getElementById("verbSelectorContainer");
         c.style.display = c.style.display==="none" ? "block" : "none";
@@ -171,28 +191,51 @@
 
     function getKey(v,t,p){ return v+"|"+t+"|"+p; }
     function getCard(v,t,p){ let k=getKey(v,t,p); if(!srs[k]) srs[k]={ease:2.5,interval:1,due:0}; return srs[k]; }
-    function pickCard(verbs,tenses){
-        let now = Date.now(), list = [];
-        verbs.forEach(v=>tenses.forEach(t=>subjects.forEach(s=>{ let c=getCard(v,t,s.i); if(c.due <= now) list.push({v,t,s,card:c}); })));
-        return list.length ? list[Math.floor(Math.random()*list.length)] : null;
+
+    // ---------------- PICK CARD (all selected verbs & tenses) ----------------
+    function pickCard(verbs, tenses) {
+        if (verbs.length === 0 || tenses.length === 0) return null;
+
+        // pick a random verb
+        const v = verbs[Math.floor(Math.random() * verbs.length)];
+        // pick a random tense
+        const t = tenses[Math.floor(Math.random() * tenses.length)];
+        // pick a random subject
+        const s = subjects[Math.floor(Math.random() * subjects.length)];
+
+        // get SRS card for this combination (keep interval/ease tracking)
+        const card = getCard(v, t, s.i);
+
+        return { v, t, s, card };
     }
 
     function updateCounter(){ document.getElementById("counter").innerText=`Questions: ${totalQuestions} | Correct: ${correctAnswers}`; }
 
-    function nextQ(){
-        document.getElementById("fullConjugation").style.display="none";
-        document.getElementById("toggleConjugationBtn").innerText="Show full conjugation";
+    // ---------------- NEXT QUESTION ----------------
+    function nextQ() {
+        document.getElementById("fullConjugation").style.display = "none";
+        document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
 
-        const verbs=getSelectedVerbs(), tenses=getSelectedTenses();
-        if(tenses.length===0){ document.getElementById("question").innerText="Select at least one tense"; return; }
-        let item=pickCard(verbs,tenses);
-        if(!item){ document.getElementById("question").innerText="🎉 Nothing due!"; return; }
-        current=item;
-        const template=sentenceTemplates[item.t][Math.floor(Math.random()*sentenceTemplates[item.t].length)];
-        document.getElementById("question").innerHTML=template.replace("___",item.s.p+" ... ("+item.v+") <span class='tense'>["+tenseLabels[item.t]+"]</span>");
-        document.getElementById("answer").value="";
-        document.getElementById("feedback").innerText="";
-        setTimeout(()=>document.getElementById("answer").focus(),0);
+        const verbs = getSelectedVerbs();
+        const tenses = getSelectedTenses();
+        if (verbs.length === 0 || tenses.length === 0) {
+            document.getElementById("question").innerText = "Select at least one verb and one tense";
+            return;
+        }
+
+        const item = pickCard(verbs, tenses);
+        if (!item) {
+            document.getElementById("question").innerText = "🎉 Nothing due!";
+            return;
+        }
+
+        current = item;
+        const template = sentenceTemplates[item.t][Math.floor(Math.random() * sentenceTemplates[item.t].length)];
+        document.getElementById("question").innerHTML =
+            template.replace("___", item.s.p + " ... (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>");
+        document.getElementById("answer").value = "";
+        document.getElementById("feedback").innerText = "";
+        setTimeout(() => document.getElementById("answer").focus(), 0);
     }
 
     function updateSRS(card,correct){
