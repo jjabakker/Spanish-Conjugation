@@ -62,9 +62,19 @@
             margin-left: 10px;
         }
 
-        #verbSelector, #tenseSelector {
+        #verbSelector {
+            column-count: 2;       /* number of columns */
+            column-gap: 20px;      /* gap between columns */
+        }
+        #verbSelector label {
+            display: block;        /* each verb on its own line */
+            margin-bottom: 5px;
+        }
+
+       #tenseSelector {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr; /* number of columns */
+            grid-auto-flow: row; /* <-- fill column first, then go to next column */
             gap: 5px 20px;
             margin-top: 10px;
         }
@@ -95,9 +105,9 @@
 
 <h2>Spanish Trainer v7</h2>
 
-<label>Verbs:</label>
+
 <input id="verbs"
-       value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,vivir,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,volver">
+       value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,vivir,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,volver" style="display:none;">
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
 <div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
@@ -117,7 +127,7 @@
     <div id="tenseSelector"></div>
 </div>
 
-<button onclick="nextQ()">Next</button>
+<button onclick="nextQ()">Next Question</button>
 
 <h3 id="question"></h3>
 <input id="answer" placeholder="Type answer">
@@ -490,15 +500,45 @@
     }
 
     // ---------------- FULL CONJUGATION ----------------
-    function showFullConjugation() {
-        if (!current.v) return;
-        let v = current.v, t = current.t;
-        let html = "<b>" + v + " [" + tenseLabels[t] + "]</b><br>";
-        subjects.forEach(s => {
-            html += s.p + ": " + conjugate(v, t, s.i) + "<br>";
+    function showFullConjugation(){
+        if(!current.v) return;
+        let v = current.v;
+        let selectedTenses = getSelectedTenses();
+        if(selectedTenses.length === 0) selectedTenses = Object.keys(tenseLabels); // fallback to all
+
+        let html = `<b>${v}</b><br>
+        <table border="1" cellspacing="0" cellpadding="4"
+               style="font-size:15px; border-collapse: collapse; text-align:center;">`;
+
+        // Table header: tenses
+        html += "<tr><th style='padding:4px 6px;'>Subject</th>";
+        selectedTenses.forEach(t => {
+            html += `<th style='padding:4px 6px;'>${tenseLabels[t]}</th>`;
         });
-        document.getElementById("fullConjugation").innerHTML = html;
-        document.getElementById("fullConjugation").style.display = "block";
+        html += "</tr>";
+
+        // Table rows: subjects
+        subjects.forEach(s => {
+            html += `<tr><td style='padding:4px 6px;'>${s.p}</td>`;
+            selectedTenses.forEach(t => {
+                let form;
+                if(t === "gerundio") {
+                    // Only the gerund form, drop "estar"
+                    form = gerund(v);
+                } else {
+                    // Everything else stays as before
+                    form = conjugate(v, t, s.i);
+                }
+                html += `<td style='padding:4px 6px;'>${form}</td>`;
+            });
+            html += "</tr>";
+        });
+
+        html += "</table>";
+
+        const fc = document.getElementById("fullConjugation");
+        fc.innerHTML = html;
+        fc.style.display = "block";
         document.getElementById("toggleConjugationBtn").innerText = "Hide full conjugation";
     }
 
