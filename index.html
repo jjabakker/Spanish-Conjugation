@@ -95,8 +95,13 @@
 <button onclick="nextQ()">Next</button>
 
 <h3 id="question"></h3>
+
 <input id="answer" placeholder="Type answer">
 <button onclick="check()">Check</button>
+
+<!-- Toggle full conjugation button -->
+<button id="toggleConjugationBtn" onclick="toggleFullConjugation()">Show full conjugation</button>
+<p id="fullConjugation" class="meta"></p>
 
 <p id="feedback"></p>
 <p class="meta" id="meta"></p>
@@ -299,6 +304,16 @@
     // ---------------- Next question ----------------
     // ---------------- Next question ----------------
     function nextQ() {
+
+        // Hide full conjugation
+        const elem = document.getElementById("fullConjugation");
+        const btn = document.getElementById("toggleConjugationBtn");
+        elem.style.display = "none";
+        btn.innerText = "Show full conjugation";
+
+        // Clear full conjugation from previous question
+        document.getElementById("fullConjugation").innerText = "";
+
         let verbs = document.getElementById("verbs").value.split(",").map(v => v.trim());
         let tenses = Array.from(document.querySelectorAll("#tenses input:checked")).map(c => c.value);
 
@@ -325,7 +340,7 @@
         document.getElementById("question").innerHTML =
             template.replace(
                 "___",
-                item.s.p + " ___ (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>"
+                item.s.p + " ... (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>"
             );
 
         document.getElementById("answer").value = "";
@@ -390,6 +405,61 @@
     document.addEventListener("DOMContentLoaded", function () {
         nextQ();
     });
+
+
+    function showFullConjugation() {
+        if (!current.v) return;
+
+        const tenseLabels = {
+            present: "Presente",
+            perfecto: "Pretérito Perfecto",
+            indefinido: "Pretérito Indefinido",
+            imperfecto: "Pretérito Imperfecto"
+        };
+
+        let html = "<b>" + current.v + "</b><br>";
+
+        Object.keys(tenseLabels).forEach(t => {
+            html += "<i>" + tenseLabels[t] + ":</i><br>";
+            html += "<table style='border-collapse: collapse; margin-bottom: 12px;'>";
+
+            subjects.forEach(s => {
+                let conj = conjugate(current.v, t, s.i);
+
+                // Check if this conjugation is irregular
+                let isIrregular = irregulars[current.v] && irregulars[current.v][t] && irregulars[current.v][t][s.i] !== undefined;
+
+                // Color irregular verbs red
+                let color = isIrregular ? "red" : "black";
+
+                html += "<tr>";
+                html += "<td style='text-align:right; font-weight:bold; padding: 4px 8px; min-width: 90px;'>" + s.p + ":</td>";
+                html += "<td style='padding-left:12px; min-width: 100px; color:" + color + ";'>" + conj + "</td>";
+                html += "</tr>";
+            });
+
+            html += "</table>";
+        });
+
+        document.getElementById("fullConjugation").innerHTML = html;
+    }
+
+    function toggleFullConjugation() {
+        const elem = document.getElementById("fullConjugation");
+        const btn = document.getElementById("toggleConjugationBtn");
+
+        if (elem.style.display === "block") {
+            // Hide
+            elem.style.display = "none";
+            btn.innerText = "Show full conjugation";
+        } else {
+            // Show
+            showFullConjugation();  // populate the table
+            elem.style.display = "block";
+            btn.innerText = "Hide full conjugation";
+        }
+    }
+
 </script>
 
 </body>
