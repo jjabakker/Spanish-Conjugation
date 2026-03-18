@@ -107,7 +107,43 @@
 <h2>Spanish Trainer v7</h2>
 
 <input id="verbs" value="
-aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, dormir, entender, escribir, estar, girar, haber, hacer, hablar, ir, jugar, levantar, levantarse, poner, poder, romper, saber, sentir, ser, traer, venir, ver, vestirse, vivir, volver, salir, querer"
+    aparecer,
+    aprender,
+    abrir,
+    comer,
+    conocer,
+    caber,
+    dar,
+    dejar,
+    decidir,
+    decir,
+    dormir,
+    entender,
+    escribir,
+    estar,
+    girar,
+    haber,
+    hacer,
+    hablar,
+    ir,
+    jugar,
+    levantar,
+    levantarse,
+    poner,
+    poder,
+    romper,
+    saber,
+    sentir,
+    ser,
+    tener,
+    traer,
+    venir,
+    ver,
+    vestirse,
+    vivir,
+    volver,
+    salir,
+    querer"
        style="display:none;">
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
@@ -141,11 +177,11 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
 
 <script>
     const tenseLabels = {
-        present: "Presente",
-        perfecto: "Pretérito Perfecto",
+        present:    "Presente",
+        perfecto:   "Pretérito Perfecto",
         indefinido: "Pretérito Indefinido",
         imperfecto: "Pretérito Imperfecto",
-        gerundio: "Gerundio"
+        gerundio:   "Gerundio"
     };
     const subjects = [{p: "yo", i: 0}, {p: "tú", i: 1}, {p: "él", i: 2}, {p: "nosotros", i: 3}, {
         p: "vosotros",
@@ -154,22 +190,201 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
     const haber = ["he", "has", "ha", "hemos", "habéis", "han"];
     const estarForms = ["estoy", "estás", "está", "estamos", "estáis", "están"];
     const sentenceTemplates = {
-        present: ["Hoy ___", "Siempre ___"],
-        perfecto: ["Hoy ___", "Esta semana ___"],
+        present:    ["Hoy ___", "Siempre ___"],
+        perfecto:   ["Hoy ___", "Esta semana ___"],
         indefinido: ["Ayer ___", "Anoche ___"],
         imperfecto: ["Antes ___", "Cuando era joven ___"],
-        gerundio: ["Ahora ___", "En este momento ___"]
+        gerundio:   ["Ahora ___", "En este momento ___"]
     };
-    const irregulars = {};
-    const irregularParticiples = {};
 
+    const irregularParticiples = {
+        abrir:      "geopend",
+        aparecer:   "verschenen",
+        aprender:   "geleerd",
+        comer:      "gegeten",
+        dar:        "gegeven",
+        decir:      "gezegd",
+        dormir:     "geslapen",
+        entender:   "begrepen",
+        escribir:   "geschreven",
+        estar:      "geweest",
+        girar:      "gedraaid",
+        haber:      "gehad",
+        hablar:     "gesproken",
+        hacer:      "gedaan",
+        ir:         "gegaan",
+        jugar:      "gespeeld",
+        levantarse: "opgestaan",
+        poner:      "gezet",
+        romper:     "gebroken",
+        saber:      "geweten",
+        sentir:     "gevoeld",
+        ser:        "geweest",
+        tener:      "gehad",
+        traer:      "gebracht",
+        venir:      "gekomen",
+        vestirse:   "aangekleed",
+        volver:     "teruggekomen",
+        vivir:      "geleefd",
+        ver:        "gezien"
+    };
+
+    const spanishIrregularParticiples = {
+        abrir: "abierto",
+        decir: "dicho",
+        escribir: "escrito",
+        hacer: "hecho",
+        poner: "puesto",
+        romper: "roto",
+        ver: "visto",
+        volver: "vuelto",
+        tener: "tenido",
+        ser: "sido",
+        ir: "ido",
+        estar: "estado",
+        traer: "traído",
+        venir: "venido",
+        // add more irregulars as needed
+    };
+
+    function participle(v) {
+        return spanishIrregularParticiples[v] || (v.endsWith("ar") ? v.slice(0,-2) + "ado" : v.slice(0,-2) + "ido");
+    }
+
+    const dutchDict = {
+        aparecer:   {inf: "verschijnen"},
+        aprender:   {inf: "leren"},
+        abrir:      {inf: "openen"},
+        caber:      {inf: "passen"},
+        comer:      {inf: "eten", pp: "gegeten"},
+        conocer:    {inf: "kennen"},
+        dar:        {inf: "geven", pp: "gegeven"},
+        dejar:      {inf: "laten"},
+        decidir:    {inf: "beslissen"},
+        decir:      {inf: "zeggen", pp: "gezegd"},
+        dormir:     {inf: "slapen", pp: "geslapen"},
+        entender:   {inf: "begrijpen", pp: "begrepen"},
+        escribir:   {inf: "schrijven", pp: "geschreven"},
+        estar:      {inf: "zijn", pp: "geweest"},
+        girar:      {inf: "draaien", pp: "gedraaid"},
+        haber:      {inf: "hebben"},
+        hacer:      {inf: "doen", pp: "gedaan"},
+        hablar:     {inf: "spreken", pp: "gesproken"},
+        ir:         {inf: "gaan", pp: "gegaan"},
+        jugar:      {inf: "spelen", pp: "gespeeld"},
+        levantar:   {inf: "optillen", pp: "opgetild"},
+        levantarse: {inf: "opstaan", separable: true, reflexive: true, pp: "opgestaan"},
+        poner:      {inf: "zetten", pp: "gezet"},
+        poder:      {inf: "kunnen"},
+        romper:     {inf: "breken", pp: "gebroken"},
+        saber:      {inf: "weten", pp: "geweten"},
+        sentir:     {inf: "voelen", pp: "gevoeld"},
+        ser:        {inf: "zijn", pp: "geweest"},
+        tener:      {inf: "hebben", pp: "gehad"},
+        traer:      {inf: "brengen", pp: "gebracht"},
+        venir:      {inf: "komen", pp: "gekomen"},
+        ver:        {inf: "zien", pp: "gezien"},
+        vestirse:   {inf: "zich aankleden", separable: true, reflexive: true, pp: "aangekleed"},
+        vivir:      {inf: "leven", pp: "geleefd"},
+        volver:     {inf: "terugkomen", pp: "teruggekomen"},
+        salir:      {inf: "vertrekken", pp: "vertrokken"},
+        querer:     {inf: "willen", pp: "gewild"}
+    };
+
+    const irregularPast = {
+        doen:      ["deed","deed","deed","deden","deden","deden"],
+        eten:      ["at","at","at","aten","aten","aten"],
+        geven:     ["gaf","gaf","gaf","gaven","gaven","gaven"],
+        komen:     ["kwam","kwam","kwam","kwamen","kwamen","kwamen"],
+        schrijven: ["schreef","schreef","schreef","schreven","schreven","schreven"],
+        spreken:   ["sprak","sprak","sprak","spraken","spraken","spraken"],
+        staan:     ["stond","stond","stond","stonden","stonden","stonden"],
+        willen:    ["wil","wil","wil","willen","willen","willen"],
+        gaan:      ["ging","ging","ging","gingen","gingen","gingen"],
+        zien:      ["zag","zag","zag","zagen","zagen","zagen"],
+        zijn:      ["was","was","was","waren","waren","waren"],
+        hebben:    ["had","had","had","hadden","hadden","hadden"]
+    };
+
+    const irregulars = {
+        ir: {
+            present: ["voy", "vas", "va", "vamos", "vais", "van"],
+            perfecto: ["ido", "ido", "ido", "ido", "ido", "ido"],
+            indefinido: ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
+            imperfecto: ["iba", "ibas", "iba", "íbamos", "ibais", "iban"]
+        },
+        ser: {
+            present: ["soy", "eres", "es", "somos", "sois", "son"],
+            perfecto: ["sido", "sido", "sido", "sido", "sido", "sido"],
+            indefinido: ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
+            imperfecto: ["era", "eras", "era", "éramos", "erais", "eran"]
+        },
+        haber: {
+            present: ["he", "has", "ha", "hemos", "habéis", "han"],
+            perfecto: ["habido", "habido", "habido", "habido", "habido", "habido"],
+            indefinido: ["hube", "hubiste", "hubo", "hubimos", "hubisteis", "hubieron"],
+            imperfecto: ["había", "habías", "había", "habíamos", "habíais", "habían"]
+        },
+        tener: {
+            present: ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen"],
+            perfecto: ["tenido","tenido","tenido","tenido","tenido","tenido"],
+            indefinido: ["tuve","tuviste","tuvo","tuvimos","tuvisteis","tuvieron"],
+            imperfecto: ["tenía","tenías","tenía","teníamos","teníais","tenían"]
+        },
+        hacer: {
+            present: ["hago","haces","hace","hacemos","hacéis","hacen"],
+            perfecto: ["hecho","hecho","hecho","hecho","hecho","hecho"],
+            indefinido: ["hice","hiciste","hizo","hicimos","hicisteis","hicieron"],
+            imperfecto: ["hacía","hacías","hacía","hacíamos","hacíais","hacían"]
+        },
+        decir: {
+            present: ["digo","dices","dice","decimos","decís","dicen"],
+            perfecto: ["dicho","dicho","dicho","dicho","dicho","dicho"],
+            indefinido: ["dije","dijiste","dijo","dijimos","dijisteis","dijeron"],
+            imperfecto: ["decía","decías","decía","decíamos","decíais","decían"]
+        },
+        ver: {
+            present: ["veo","ves","ve","vemos","veis","ven"],
+            perfecto: ["visto","visto","visto","visto","visto","visto"],
+            indefinido: ["vi","viste","vio","vimos","visteis","vieron"],
+            imperfecto: ["veía","veías","veía","veíamos","veíais","veían"]
+        },
+        poder: {
+            present: ["puedo","puedes","puede","podemos","podéis","pueden"],
+            perfecto: ["podido","podido","podido","podido","podido","podido"],
+            indefinido: ["pude","pudiste","pudo","pudimos","pudisteis","pudieron"],
+            imperfecto: ["podía","podías","podía","podíamos","podíais","podían"]
+        },
+        saber: {
+            present: ["sé","sabes","sabe","sabemos","sabéis","saben"],
+            perfecto: ["sabido","sabido","sabido","sabido","sabido","sabido"],
+            indefinido: ["supe","supiste","supo","supimos","supisteis","supieron"],
+            imperfecto: ["sabía","sabías","sabía","sabíamos","sabíais","sabían"]
+        },
+        estar: {
+            present: ["estoy","estás","está","estamos","estáis","están"],
+            perfecto: ["estado","estado","estado","estado","estado","estado"],
+            indefinido: ["estuve","estuviste","estuvo","estuvimos","estuvisteis","estuvieron"],
+            imperfecto: ["estaba","estabas","estaba","estábamos","estabais","estaban"]
+        },
+        venir: {
+            present: ["vengo","vienes","viene","venimos","venís","vienen"],
+            perfecto: ["venido","venido","venido","venido","venido","venido"],
+            indefinido: ["vine","viniste","vino","vinimos","vinisteis","vinieron"],
+            imperfecto: ["venía","venías","venía","veníamos","veníais","venían"]
+        },
+        traer: {
+            present: ["traigo","traes","trae","traemos","traéis","traen"],
+            perfecto: ["traído","traído","traído","traído","traído","traído"],
+            indefinido: ["traje","trajiste","trajo","trajimos","trajisteis","trajeron"],
+            imperfecto: ["traía","traías","traía","traíamos","traíais","traían"]
+        }
+        // you can continue adding more irregular verbs here
+    };
 
     // --- your irregulars and dutchTranslationsTense definitions go here (copy from your previous code) ---
     // to save space, assume they are pasted here exactly as in your HTML
 
-    function participle(v) {
-        return irregularParticiples[v] || (v.endsWith("ar") ? v.slice(0, -2) + "ado" : v.slice(0, -2) + "ido");
-    }
 
     function gerund(v) {
         return v.endsWith("ar") ? v.slice(0, -2) + "ando" : v.slice(0, -2) + "iendo";
@@ -180,9 +395,12 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
     }
 
     function conjugate(v, t, p) {
-        if (t === "perfecto") return haber[p] + " " + participle(v);
-        if (t === "gerundio") return estarForms[p] + " " + gerund(v);
-        if (irregulars[v] && irregulars[v][t]) return irregulars[v][t][p];
+        if (t === "perfecto")
+            return haber[p] + " " + participle(v);
+        if (t === "gerundio")
+            return estarForms[p] + " " + gerund(v);
+        if (irregulars[v] && irregulars[v][t])
+            return irregulars[v][t][p];
         let stem = v.slice(0, -2), end = v.slice(-2), endings = {
             present: {
                 ar: ["o", "as", "a", "amos", "áis", "an"],
@@ -272,12 +490,14 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
 
     function getCard(v, t, p) {
         let k = getKey(v, t, p);
-        if (!srs[k]) srs[k] = {ease: 2.5, interval: 1, due: 0};
+        if (!srs[k]) srs[k] =
+            {ease: 2.5, interval: 1, due: 0};
         return srs[k];
     }
 
     function pickCard(verbs, tenses) {
-        if (verbs.length === 0 || tenses.length === 0) return null;
+        if (verbs.length === 0 || tenses.length === 0)
+            return null;
         const v = verbs[Math.floor(Math.random() * verbs.length)];
         const t = tenses[Math.floor(Math.random() * tenses.length)];
         const s = subjects[Math.floor(Math.random() * subjects.length)];
@@ -322,7 +542,8 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
     }
 
     function check() {
-        if (!current || !current.v) return "wrong";
+        if (!current || !current.v)
+            return "wrong";
 
         let user = document.getElementById("answer").value.trim().toLowerCase();
         let correct = conjugate(current.v, current.t, current.s.i);
@@ -340,11 +561,14 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
 
         updateSRS(current.card, okStrict || okLoose);
         totalQuestions++;
-        if (okStrict || okLoose) correctAnswers++;
+        if (okStrict || okLoose)
+            correctAnswers++;
         updateCounter();
 
-        if (okStrict) return "correct";
-        if (okLoose) return "almost";
+        if (okStrict)
+            return "correct";
+        if (okLoose)
+            return "almost";
         return "wrong";
     }
 
@@ -378,164 +602,113 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
         }
     }
 
-    const dutchDict = {
-        aparecer:   {inf: "verschijnen"},
-        aprender:   {inf: "leren"},
-        abrir:      {inf: "openen"},
-        comer:      {inf: "eten"},
-        conocer:    {inf: "kennen"},
-        caber:      {inf: "passen"},
-        dar:        {inf: "geven"},
-        dejar:      {inf: "laten"},
-        decidir:    {inf: "beslissen"},
-        decir:      {inf: "zeggen", pp: "gezegd"},
-        dormir:     {inf: "slapen", pp: "geslapen"},
-        entender:   {inf: "begrijpen", pp: "begrepen"},
-        escribir:   {inf: "schrijven", pp: "geschreven"},
-        estar:      {inf: "zijn", pp: "geweest"},
-        girar:      {inf: "draaien", pp: "gedraaid"},
-        haber:      {inf: "hebben"},
-        hacer:      {inf: "doen", pp: "gedaan"},
-        hablar:     {inf: "spreken", pp: "gesproken"},
-        ir:         {inf: "gaan", pp: "gegaan"},
-        jugar:      {inf: "spelen", pp: "gespeeld"},
-        levantar:   {inf: "optillen", pp: "opgetild"},
-        levantarse: {inf: "opstaan", separable: true, reflexive: true, pp: "opgestaan"},
-        poner:      {inf: "zetten", pp: "gezet"},
-        poder:      {inf: "kunnen"},
-        romper:     {inf: "breken", pp: "gebroken"},
-        saber:      {inf: "weten", pp: "geweten"},
-        sentir:     {inf: "voelen", pp: "gevoeld"},
-        ser:        {inf: "zijn", pp: "geweest"},
-        traer:      {inf: "brengen", pp: "gebracht"},
-        venir:      {inf: "komen", pp: "gekomen"},
-        ver:        {inf: "zien", pp: "gezien"},
-        vestirse:   {inf: "zich aankleden", separable: true, reflexive: true, pp: "aangekleed"},
-        vivir:      {inf: "leven", pp: "geleefd"},
-        volver:     {inf: "terugkomen", pp: "teruggekomen"},
-        salir:      {inf: "vertrekken", pp: "vertrokken"},
-        querer:     {inf: "willen", pp: "gewild"}
-    };
-
     function getDutchTranslation(v, t, p) {
         const entry = dutchDict[v];
         if (!entry) return "(geen vertaling)";
 
-        const inf = entry.inf;
         const subj = ["ik", "jij", "hij", "wij", "jullie", "zij"];
         const refl = ["me", "je", "zich", "ons", "je", "zich"];
 
-        // handle separable verbs
-        let prefix = "";
-        let base = inf;
-        if (entry.separable) {
-            if (inf === "opstaan") { prefix = "op"; base = "staan"; }
-            if (inf === "aankleden") { prefix = "aan"; base = "kleden"; }
-        }
+        let base = entry.inf;
+        let prefix = entry.prefix || ""; // for separable verbs
+        let isSeparable = entry.separable || false;
+        let isReflexive = entry.reflexive || false;
 
-        const irregular = {
-            zijn:   ["ben", "bent", "is", "zijn", "zijn", "zijn"],
-            hebben: ["heb", "hebt", "heeft", "hebben", "hebben", "hebben"],
-            gaan:   ["ga", "gaat", "gaat", "gaan", "gaan", "gaan"],
-            komen:  ["kom", "komt", "komt", "komen", "komen", "komen"],
-            zien:   ["zie", "ziet", "ziet", "zien", "zien", "zien"],
-            doen:   ["doe", "doet", "doet", "doen", "doen", "doen"],
-            willen: ["wil", "wil", "wil", "willen", "willen", "willen"],
-            kunnen: ["kan", "kunt", "kan", "kunnen", "kunnen", "kunnen"],
-            staan:  ["sta", "staat", "staat", "staan", "staan", "staan"],
-            spreken:["spreek","spreekt","spreekt","spreken","spreken","spreken"],
+        // --- Dutch present tense irregulars ---
+        const presentIrregular = {
+            zijn:   ["ben","bent","is","zijn","zijn","zijn"],
+            hebben: ["heb","hebt","heeft","hebben","hebben","hebben"],
+            gaan:   ["ga","gaat","gaat","gaan","gaan","gaan"],
+            komen:  ["kom","komt","komt","komen","komen","komen"],
+            zien:   ["zie","ziet","ziet","zien","zien","zien"],
+            doen:   ["doe","doet","doet","doen","doen","doen"],
+            staan:  ["sta","staat","staat","staan","staan","staan"],
+            spreken: ["spreek","spreekt","spreekt","spreken","spreken","spreken"],
+            eten:   ["eet","eet","eet","eten","eten","eten"],
+            schrijven: ["schrijf","schrijft","schrijft","schrijven","schrijven","schrijven"],
+            geven: ["geef","geeft","geeft","geven","geven","geven"],
+            willen: ["wil","wilt","wilt","willen","willen","willen"]
+        };
+
+        // --- Dutch past participles (perfect) ---
+        const pastPart = {
+            zijn: "geweest",
+            hebben: "gehad",
+            gaan: "gegaan",
+            komen: "gekomen",
+            zien: "gezien",
+            doen: "gedaan",
+            staan: "gestaan",
+            spreken: "gesproken",
+            eten: "gegeten",
+            schrijven: "geschreven",
+            geven: "gegeven"
         };
 
         function presentForm() {
-            if (irregular[base]) return irregular[base][p];
-            let stem = base.replace(/en$/, "");
+            if (presentIrregular[base]) return presentIrregular[base][p];
+            // regular verbs: stem + ending
+            const stem = base.replace(/en$/, "");
             const endings = ["", "t", "t", "en", "en", "en"];
             return stem + endings[p];
         }
 
-        function pastParticiple() {
-            const irregularPart = {
-                eten:      "gegeten",
-                schrijven: "geschreven",
-                zien:      "gezien",
-                komen:     "gekomen",
-                gaan:      "gegaan",
-                doen:      "gedaan",
-                geven:     "gegeven",
-                staan:     "gestaan",
-                spreken:   "gesproken"
-            };
-
-            if (irregularPart[base]) {
-                return entry.separable ? prefix + irregularPart[base] : irregularPart[base];
-            }
-
-            let stem = base.replace(/en$/, "");
-            let part = "ge" + stem + "d";
-            if (entry.separable) part = prefix + "ge" + stem + "d";
-
+        function pastParticipleForm() {
+            let part = pastPart[base] || ("ge" + base.replace(/en$/, "") + "d");
+            if (isSeparable) part = prefix + part;
             return part;
         }
 
-        // --- PRESENT ---
+        // --- Construct translation per tense ---
         if (t === "present") {
             let verb = presentForm();
-            if (entry.separable) verb += " " + prefix;
-            if (entry.reflexive) return subj[p] + " " + verb + " " + refl[p];
+            if (isSeparable) verb += " " + prefix;
+            if (isReflexive) return subj[p] + " " + verb + " " + refl[p];
             return subj[p] + " " + verb;
         }
 
-        // --- PERFECT ---
         if (t === "perfecto") {
             const auxZijn = ["gaan", "komen", "zijn", "blijven", "staan"];
             const aux = auxZijn.includes(base)
-                ? ["ben", "bent", "is", "zijn", "zijn", "zijn"]
-                : ["heb", "hebt", "heeft", "hebben", "hebben", "hebben"];
-
-            let part = pastParticiple();
-            if (entry.reflexive) return subj[p] + " " + aux[p] + " " + refl[p] + " " + part;
+                ? ["ben","bent","is","zijn","zijn","zijn"]
+                : ["heb","hebt","heeft","hebben","hebben","hebben"];
+            let part = pastParticipleForm();
+            if (isReflexive) return subj[p] + " " + aux[p] + " " + refl[p] + " " + part;
             return subj[p] + " " + aux[p] + " " + part;
         }
 
-        // --- PAST ---
-        // --- PAST ---
         if (t === "indefinido" || t === "imperfecto") {
-            const irregularPast = {
-                zijn:      ["was", "was", "was", "waren", "waren", "waren"],
-                hebben:    ["had", "had", "had", "hadden", "hadden", "hadden"],
-                gaan:      ["ging", "ging", "ging", "gingen", "gingen", "gingen"],
-                komen:     ["kwam", "kwam", "kwam", "kwamen", "kwamen", "kwamen"],
-                zien:      ["zag", "zag", "zag", "zagen", "zagen", "zagen"],
-                doen:      ["deed", "deed", "deed", "deden", "deden", "deden"],
-                staan:     ["stond", "stond", "stond", "stonden", "stonden", "stonden"],
-                spreken:   ["sprak", "sprak", "sprak", "spraken", "spraken", "spraken"],
-                eten:      ["at", "at", "at", "aten", "aten", "aten"],
+            const pastIrregular = {
+                zijn: ["was","was","was","waren","waren","waren"],
+                hebben: ["had","had","had","hadden","hadden","hadden"],
+                gaan: ["ging","ging","ging","gingen","gingen","gingen"],
+                komen: ["kwam","kwam","kwam","kwamen","kwamen","kwamen"],
+                zien: ["zag","zag","zag","zagen","zagen","zagen"],
+                doen: ["deed","deed","deed","deden","deden","deden"],
+                staan: ["stond","stond","stond","stonden","stonden","stonden"],
+                spreken: ["sprak","sprak","sprak","spraken","spraken","spraken"],
+                eten: ["at","at","at","aten","aten","aten"],
                 schrijven: ["schreef","schreef","schreef","schreven","schreven","schreven"],
-                geven:     ["gaf","gaf","gaf","gaven","gaven","gaven"],
-                krijgen:   ["kreeg","kreeg","kreeg","kregen","kregen","kregen"],
-                zien:      ["zag","zag","zag","zagen","zagen","zagen"],
-                komen:     ["kwam","kwam","kwam","kwamen","kwamen","kwamen"]
-                // ... add more irregulars as needed
+                geven: ["gaf","gaf","gaf","gaven","gaven","gaven"],
+                willen: ["wilde","wilde","wilde","wilden","wilden","wilden"]
             };
-
-            if (irregularPast[base]) return subj[p] + " " + irregularPast[base][p];
-
+            if (pastIrregular[base]) return subj[p] + " " + pastIrregular[base][p];
             // default regular past
-            let stem = base.replace(/en$/, "");
-            let past = (p < 3) ? stem + "de" : stem + "den";
+            const stem = base.replace(/en$/, "");
+            const past = (p < 3) ? stem + "de" : stem + "den";
             return subj[p] + " " + past;
         }
 
-        // --- GERUND ---
         if (t === "gerundio") {
-            const aux = ["ben", "bent", "is", "zijn", "zijn", "zijn"];
-            let verb = "aan het " + inf;
-            if (entry.reflexive) verb = "zich " + verb;
+            const aux = ["ben","bent","is","zijn","zijn","zijn"];
+            let verb = "aan het " + base;
+            if (isReflexive) verb = "zich " + verb;
             return subj[p] + " " + aux[p] + " " + verb;
         }
 
-        return subj[p] + " " + inf;
+        return subj[p] + " " + base;
     }
+
     // initial render
     renderCheckboxes("verbSelector", getVerbList(), "selectedVerbs");
     const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v: key, l: tenseLabels[key]}));
@@ -547,9 +720,12 @@ aparecer, aprender, abrir, comer, conocer, caber, dar, dejar, decidir, decir, do
         if (e.key === "Enter") {
             const result = check(); // "correct", "almost", or "wrong"
             let delay = 1000; // default for correct
-            if (result === "correct") delay = 1000;
-            else if (result === "almost") delay = 2000;
-            else if (result === "wrong") delay = 6000;
+            if (result === "correct")
+                delay = 1000;
+            else if (result === "almost")
+                delay = 2000;
+            else if (result === "wrong")
+                delay = 6000;
 
             setTimeout(nextQ, delay);
         }
