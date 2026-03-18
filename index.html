@@ -63,15 +63,16 @@
         }
 
         #verbSelector {
-            column-count: 2;       /* number of columns */
-            column-gap: 20px;      /* gap between columns */
+            column-count: 2; /* number of columns */
+            column-gap: 20px; /* gap between columns */
         }
+
         #verbSelector label {
-            display: block;        /* each verb on its own line */
+            display: block; /* each verb on its own line */
             margin-bottom: 5px;
         }
 
-       #tenseSelector {
+        #tenseSelector {
             display: grid;
             grid-template-columns: 1fr 1fr; /* number of columns */
             grid-auto-flow: row; /* <-- fill column first, then go to next column */
@@ -86,7 +87,9 @@
         }
 
         .selector-buttons button {
-            flex: 1;
+            padding: 6px; /* smaller padding */
+            font-size: 16px; /* smaller font */
+            width: auto; /* let flex sizing work */
         }
 
         label {
@@ -107,7 +110,43 @@
 
 
 <input id="verbs"
-       value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,vivir,volver" style="display:none;">
+       value="
+       aparecer,
+       aprender,
+       abrir,
+       comer,
+       conocer,
+       caber,
+       dar,
+       dejar,
+       decidir,
+       decir,
+       dormir,
+       entender,
+       escribir,
+       estar,
+       girar,
+       haber,
+       hacer,
+       hablar,
+       ir,
+       jugar,
+       levantar,
+       levantarse,
+       poner,
+       poder,
+       romper,
+       saber,
+       sentir,
+       ser,
+       traer,
+       venir,
+       ver,
+       vestirse,
+       vivir,
+       volver,
+       salir,
+       querer" style="display:none;">
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
 <div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
@@ -177,109 +216,182 @@
             imperfecto: ["estaba", "estabas", "estaba", "estábamos", "estabais", "estaban"]
         },
         dar: {
-            present: ["doy", "das", "da", "damos", "dais", "dan"],
+            present:    ["doy", "das", "da", "damos", "dais", "dan"],
             indefinido: ["di", "diste", "dio", "dimos", "disteis", "dieron"],
             imperfecto: ["daba", "dabas", "daba", "dábamos", "dabais", "daban"]
         },
         ver: {
-            present: ["veo", "ves", "ve", "vemos", "veis", "ven"],
+            present:    ["veo", "ves", "ve", "vemos", "veis", "ven"],
             indefinido: ["vi", "viste", "vio", "vimos", "visteis", "vieron"],
             imperfecto: ["veía", "veías", "veía", "veíamos", "veíais", "veían"]
         },
         poder: {
-            present: ["puedo", "puedes", "puede", "podemos", "podéis", "pueden"],
+            present:    ["puedo", "puedes", "puede", "podemos", "podéis", "pueden"],
             indefinido: ["pude", "pudiste", "pudo", "pudimos", "pudisteis", "pudieron"]
         },
         poner: {
-            present: ["pongo", "pones", "pone", "ponemos", "ponéis", "ponen"],
+            present:    ["pongo", "pones", "pone", "ponemos", "ponéis", "ponen"],
             indefinido: ["puse", "pusiste", "puso", "pusimos", "pusisteis", "pusieron"]
         },
-        conocer: {present: ["conozco", "conoces", "conoce", "conocemos", "conocéis", "conocen"]},
-        aparecer: {present: ["aparezco", "apareces", "aparece", "aparecemos", "aparecéis", "aparecen"]},
-        jugar: {present: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan"]},
-        volver: {present: ["vuelvo", "vuelves", "vuelve", "volvemos", "volvéis", "vuelven"]},
+        conocer: {
+            present: ["conozco", "conoces", "conoce", "conocemos", "conocéis", "conocen"]
+        },
+        aparecer: {
+            present: ["aparezco", "apareces", "aparece", "aparecemos", "aparecéis", "aparecen"]
+        },
+        jugar: {
+            present: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan"]
+        },
+        volver: {
+            present: ["vuelvo", "vuelves", "vuelve", "volvemos", "volvéis", "vuelven"]
+        },
         venir: {
-            present: ["vengo", "vienes", "viene", "venimos", "venís", "vienen"],
+            present:    ["vengo", "vienes", "viene", "venimos", "venís", "vienen"],
             indefinido: ["vine", "viniste", "vino", "vinimos", "vinisteis", "vinieron"],
             imperfecto: ["venía", "venías", "venía", "veníamos", "veníais", "venían"]
         },
         traer: {
-            present: ["traigo", "traes", "trae", "traemos", "traéis", "traen"],
+            present:    ["traigo", "traes", "trae", "traemos", "traéis", "traen"],
             indefinido: ["traje", "trajiste", "trajo", "trajimos", "trajisteis", "trajeron"],
             imperfecto: ["traía", "traías", "traía", "traíamos", "traíais", "traían"]
         },
         tener: {
-            present: ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen"],
+            present:    ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen"],
             indefinido: ["tuve", "tuviste", "tuvo", "tuvimos", "tuvisteis", "tuvieron"],
             imperfecto: ["tenía", "tenías", "tenía", "teníamos", "teníais", "tenían"]
         },
         sentir: {
-            present: ["siento", "sientes", "siente", "sentimos", "sentís", "sienten"],
+            present:    ["siento", "sientes", "siente", "sentimos", "sentís", "sienten"],
             indefinido: ["sentí", "sentiste", "sintió", "sentimos", "sentisteis", "sintieron"],
             imperfecto: ["sentía", "sentías", "sentía", "sentíamos", "sentíais", "sentían"]
         },
         romper: {
-            present: ["rompo", "rompes", "rompe", "rompemos", "rompéis", "rompen"],
+            present:    ["rompo", "rompes", "rompe", "rompemos", "rompéis", "rompen"],
             indefinido: ["rompí", "rompiste", "rompió", "rompimos", "rompisteis", "rompieron"],
             imperfecto: ["rompía", "rompías", "rompía", "rompíamos", "rompíais", "rompían"]
         },
         escribir: {
-            present: ["escribo", "escribes", "escribe", "escribimos", "escribís", "escriben"],
+            present:    ["escribo", "escribes", "escribe", "escribimos", "escribís", "escriben"],
             indefinido: ["escribí", "escribiste", "escribió", "escribimos", "escribisteis", "escribieron"],
             imperfecto: ["escribía", "escribías", "escribía", "escribíamos", "escribíais", "escribían"]
         },
         dormir: {
-            present: ["duermo", "duermes", "duerme", "dormimos", "dormís", "duermen"],
+            present:    ["duermo", "duermes", "duerme", "dormimos", "dormís", "duermen"],
             indefinido: ["dormí", "dormiste", "durmió", "dormimos", "dormisteis", "durmieron"],
             imperfecto: ["dormía", "dormías", "dormía", "dormíamos", "dormíais", "dormían"]
         },
         dejar: {
-            present: ["dejo", "dejas", "deja", "dejamos", "dejáis", "dejan"],
+            present:    ["dejo", "dejas", "deja", "dejamos", "dejáis", "dejan"],
             indefinido: ["dejé", "dejaste", "dejó", "dejamos", "dejasteis", "dejaron"],
             imperfecto: ["dejaba", "dejabas", "dejaba", "dejábamos", "dejabais", "dejaban"]
         },
         decir: {
-            present: ["digo", "dices", "dice", "decimos", "decís", "dicen"],
+            present:    ["digo", "dices", "dice", "decimos", "decís", "dicen"],
             indefinido: ["dije", "dijiste", "dijo", "dijimos", "dijisteis", "dijeron"],
             imperfecto: ["decía", "decías", "decía", "decíamos", "decíais", "decían"]
         },
         haber: {
-            present: ["he", "has", "ha", "hemos", "habéis", "han"],
+            present:    ["he", "has", "ha", "hemos", "habéis", "han"],
             indefinido: ["hube", "hubiste", "hubo", "hubimos", "hubisteis", "hubieron"],
             imperfecto: ["había", "habías", "había", "habíamos", "habíais", "habían"]
         },
         aprender: {
-            present: ["aprendo", "aprendes", "aprende", "aprendemos", "aprendéis", "aprenden"],
+            present:    ["aprendo", "aprendes", "aprende", "aprendemos", "aprendéis", "aprenden"],
             indefinido: ["aprendí", "aprendiste", "aprendió", "aprendimos", "aprendisteis", "aprendieron"],
             imperfecto: ["aprendía", "aprendías", "aprendía", "aprendíamos", "aprendíais", "aprendían"]
         },
         entender: {
-            present: ["entiendo", "entiendes", "entiende", "entendemos", "entendéis", "entienden"],
+            present:    ["entiendo", "entiendes", "entiende", "entendemos", "entendéis", "entienden"],
             indefinido: ["entendí", "entendiste", "entendió", "entendimos", "entendisteis", "entendieron"],
             imperfecto: ["entendía", "entendías", "entendía", "entendíamos", "entendíais", "entendían"]
+        },
+        ir: {
+            present:    ["voy", "vas", "va", "vamos", "vais", "van"],
+            indefinido: ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
+            imperfecto: ["iba", "ibas", "iba", "íbamos", "ibais", "iban"]
+        },
+        abrir: {
+            present:    ["abro", "abres", "abre", "abrimos", "abrís", "abren"],
+            indefinido: ["abrí", "abriste", "abrió", "abrimos", "abristeis", "abrieron"],
+            imperfecto: ["abría", "abrías", "abría", "abríamos", "abríais", "abrían"]
+        },
+        caber: {
+            present:    ["quepo", "cabes", "cabe", "cabemos", "cabéis", "caben"],
+            indefinido: ["cupe", "cupiste", "cupo", "cupimos", "cupisteis", "cupieron"],
+            imperfecto: ["cabía", "cabías", "cabía", "cabíamos", "cabíais", "cabían"]
+        },
+        decidir: {
+            present:    ["decido", "decides", "decide", "decidimos", "decidís", "deciden"],
+            indefinido: ["decidí", "decidiste", "decidió", "decidimos", "decidisteis", "decidieron"],
+            imperfecto: ["decidía", "decidías", "decidía", "decidíamos", "decidíais", "decidían"]
+        },
+        hacer: {
+            present:    ["hago", "haces", "hace", "hacemos", "hacéis", "hacen"],
+            indefinido: ["hice", "hiciste", "hizo", "hicimos", "hicisteis", "hicieron"],
+            imperfecto: ["hacía", "hacías", "hacía", "hacíamos", "hacíais", "hacían"]
+        },
+        levantar: {
+            present:    ["levanto", "levantas", "levanta", "levantamos", "levantáis", "levantan"],
+            indefinido: ["levanté", "levantaste", "levantó", "levantamos", "levantasteis", "levantaron"],
+            imperfecto: ["levantaba", "levantabas", "levantaba", "levantábamos", "levantabais", "levantaban"]
+        },
+        levantarse: {
+            present:    ["me levanto", "te levantas", "se levanta", "nos levantamos", "os levantáis", "se levantan"],
+            indefinido: ["me levanté", "te levantaste", "se levantó", "nos levantamos", "os levantasteis", "se levantaron"],
+            imperfecto: ["me levantaba", "te levantabas", "se levantaba", "nos levantábamos", "os levantabais", "se levantaban"]
+        },
+        salir: {
+            present:    ["salgo", "sales", "sale", "salimos", "salís", "salen"],
+            indefinido: ["salí", "saliste", "salió", "salimos", "salisteis", "salieron"],
+            imperfecto: ["salía", "salías", "salía", "salíamos", "salíais", "salían"]
+        },
+        saber: {
+            present:    ["sé", "sabes", "sabe", "sabemos", "sabéis", "saben"],
+            indefinido: ["supe", "supiste", "supo", "supimos", "supisteis", "supieron"],
+            imperfecto: ["sabía", "sabías", "sabía", "sabíamos", "sabíais", "sabían"]
+        },
+        querer: {
+            present:    ["quiero", "quieres", "quiere", "queremos", "queréis", "quieren"],
+            indefinido: ["quise", "quisiste", "quiso", "quisimos", "quisisteis", "quisieron"],
+            imperfecto: ["quería", "querías", "quería", "queríamos", "queríais", "querían"]
+        },
+        vestirse: {
+            present:    ["me visto", "te vistes", "se viste", "nos vestimos", "os vestís", "se visten"],
+            indefinido: ["me vestí", "te vestiste", "se vistió", "nos vestimos", "os vestisteis", "se vistieron"],
+            imperfecto: ["me vestía", "te vestías", "se vestía", "nos vestíamos", "os vestíais", "se vestían"]
         }
     };
 
     const irregularParticiples = {
-        ser: "sido",
-        ir: "ido",
-        volver: "vuelto",
-        ver: "visto",
-        poner: "puesto",
-        hacer: "hecho",
-        abrir: "abierto",
-        decir: "dicho",
-        escribir: "escrito",
-        cubrir: "cubierto",
-        morir: "muerto",
-        romper: "roto",
-        resolver: "resuelto",
-        venir: "venido",
-        traer: "traído",
-        tener: "tenido",
-        sentir: "sentido",
-        dormir: "dormido",
-        dejar: "dejado"
+        ser:        "sido",
+        ir:         "ido",
+        volver:     "vuelto",
+        ver:        "visto",
+        poner:      "puesto",
+        hacer:      "hecho",
+        abrir:      "abierto",
+        decir:      "dicho",
+        escribir:   "escrito",
+        cubrir:     "cubierto",
+        morir:      "muerto",
+        romper:     "roto",
+        resolver:   "resuelto",
+        venir:      "venido",
+        traer:      "traído",
+        tener:      "tenido",
+        sentir:     "sentido",
+        dormir:     "dormido",
+        dejar:      "dejado",
+        abrir:      "abierto",
+        caber:      "cabido",
+        decidir:    "decidido",
+        hacer:      "hecho",
+        levantar:   "levantado",
+        levantarse: "levantado",
+        salir:      "salido",
+        saber:      "sabido",
+        querer:     "querido",
+        vestirse:   "vestido"
     };
 
     function participle(v) {
@@ -295,9 +407,12 @@
     }
 
     function conjugate(v, t, p) {
-        if (t === "perfecto") return haber[p] + " " + participle(v);
-        if (t === "gerundio") return estarForms[p] + " " + gerund(v);
-        if (irregulars[v] && irregulars[v][t]) return irregulars[v][t][p];
+        if (t === "perfecto")
+            return haber[p] + " " + participle(v);
+        if (t === "gerundio")
+            return estarForms[p] + " " + gerund(v);
+        if (irregulars[v] && irregulars[v][t])
+            return irregulars[v][t][p];
         let stem = v.slice(0, -2), end = v.slice(-2);
         const endings = {
             present: {
@@ -409,7 +524,8 @@
 
     function getCard(v, t, p) {
         let k = getKey(v, t, p);
-        if (!srs[k]) srs[k] = {ease: 2.5, interval: 1, due: 0};
+        if (!srs[k])
+            srs[k] = {ease: 2.5, interval: 1, due: 0};
         return srs[k];
     }
 
@@ -497,14 +613,16 @@
             setTimeout(nextQ, 1000);   // exact correct → 1s
         else if (okLoose)
             setTimeout(nextQ, 3000); // almost correct → 3s
+        else
+            setTimeout(nextQ, 10000); // incorrect → 10s
     }
 
     // ---------------- FULL CONJUGATION ----------------
-    function showFullConjugation(){
-        if(!current.v) return;
+    function showFullConjugation() {
+        if (!current.v) return;
         let v = current.v;
         let selectedTenses = getSelectedTenses();
-        if(selectedTenses.length === 0) selectedTenses = Object.keys(tenseLabels); // fallback to all
+        if (selectedTenses.length === 0) selectedTenses = Object.keys(tenseLabels); // fallback to all
 
         let html = `<b>${v}</b><br>
         <table border="1" cellspacing="0" cellpadding="4"
@@ -522,7 +640,7 @@
             html += `<tr><td style='padding:4px 6px;'>${s.p}</td>`;
             selectedTenses.forEach(t => {
                 let form;
-                if(t === "gerundio") {
+                if (t === "gerundio") {
                     // Only the gerund form, drop "estar"
                     form = gerund(v);
                 } else {
