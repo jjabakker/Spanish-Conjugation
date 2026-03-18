@@ -4,22 +4,90 @@
     <meta charset="UTF-8">
     <title>Spanish Trainer v7</title>
     <style>
-        body { font-family: Arial; max-width: 800px; margin: auto; padding: 30px; font-size: 22px; line-height: 1.5; }
-        h2 { font-size: 26px; }
-        h3 { font-size: 42px; font-weight: bold; margin: 25px 0; }
-        input, button { padding: 14px; width: 100%; margin: 10px 0; font-size: 22px; border-radius: 6px; border: 1px solid #ccc; }
-        button { cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #f2f2f2; }
-        .good { color: green; font-size: 26px; }
-        .bad { color: red; font-size: 26px; }
-        .meta, #counter { font-size: 18px; color: gray; }
-        .tense { font-size: 16px; color: gray; margin-left: 10px; }
+        body {
+            font-family: Arial;
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            font-size: 22px;
+            line-height: 1.5;
+        }
 
-        #verbSelector, #tenseSelector { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 20px; margin-top: 10px; }
-        .selector-buttons { display: flex; gap: 10px; margin-bottom: 10px; }
-        .selector-buttons button { flex: 1; }
-        label { display: flex; align-items: center; }
-        label input[type="checkbox"] { margin-right: 8px; width: auto; }
+        h2 {
+            font-size: 26px;
+        }
+
+        h3 {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+
+        input, button {
+            padding: 14px;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 22px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #f2f2f2;
+        }
+
+        .good {
+            color: green;
+            font-size: 26px;
+        }
+
+        .bad {
+            color: red;
+            font-size: 26px;
+        }
+
+        .meta, #counter {
+            font-size: 18px;
+            color: gray;
+        }
+
+        .tense {
+            font-size: 16px;
+            color: gray;
+            margin-left: 10px;
+        }
+
+        #verbSelector, #tenseSelector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 20px;
+            margin-top: 10px;
+        }
+
+        .selector-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .selector-buttons button {
+            flex: 1;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+        }
+
+        label input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+        }
     </style>
 </head>
 
@@ -28,7 +96,8 @@
 <h2>Spanish Trainer v7</h2>
 
 <label>Verbs:</label>
-<input id="verbs" value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,vivir,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,volver">
+<input id="verbs"
+       value="aparecer,aprender,comer,conocer,dar,decir,dejar,dormir,entender,escribir,estar,girar,haber,hablar,vivir,jugar,poder,poner,romper,sentir,ser,tener,traer,venir,ver,volver">
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
 <div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
@@ -70,64 +139,178 @@
     };
 
     const subjects = [
-        {p:"yo", i:0},{p:"tú", i:1},{p:"él", i:2},{p:"nosotros", i:3},{p:"vosotros", i:4},{p:"ellos", i:5}
+        {p: "yo", i: 0}, {p: "tú", i: 1}, {p: "él", i: 2}, {p: "nosotros", i: 3}, {p: "vosotros", i: 4}, {
+            p: "ellos",
+            i: 5
+        }
     ];
-    const haber = ["he","has","ha","hemos","habéis","han"];
-    const estarForms = ["estoy","estás","está","estamos","estáis","están"];
+    const haber = ["he", "has", "ha", "hemos", "habéis", "han"];
+    const estarForms = ["estoy", "estás", "está", "estamos", "estáis", "están"];
 
     const sentenceTemplates = {
-        present:["Hoy ___","Siempre ___"],
-        perfecto:["Hoy ___","Esta semana ___"],
-        indefinido:["Ayer ___","Anoche ___"],
-        imperfecto:["Antes ___","Cuando era joven ___"],
-        gerundio:["Ahora ___","En este momento ___"]
+        present: ["Hoy ___", "Siempre ___"],
+        perfecto: ["Hoy ___", "Esta semana ___"],
+        indefinido: ["Ayer ___", "Anoche ___"],
+        imperfecto: ["Antes ___", "Cuando era joven ___"],
+        gerundio: ["Ahora ___", "En este momento ___"]
     };
 
     const irregulars = {
-        ser:{present:["soy","eres","es","somos","sois","son"],indefinido:["fui","fuiste","fue","fuimos","fuisteis","fueron"],imperfecto:["era","eras","era","éramos","erais","eran"]},
-        estar:{present:["estoy","estás","está","estamos","estáis","están"],indefinido:["estuve","estuviste","estuvo","estuvimos","estuvisteis","estuvieron"],imperfecto:["estaba","estabas","estaba","estábamos","estabais","estaban"]},
-        dar:{present:["doy","das","da","damos","dais","dan"],indefinido:["di","diste","dio","dimos","disteis","dieron"],imperfecto:["daba","dabas","daba","dábamos","dabais","daban"]},
-        ver:{present:["veo","ves","ve","vemos","veis","ven"],indefinido:["vi","viste","vio","vimos","visteis","vieron"],imperfecto:["veía","veías","veía","veíamos","veíais","veían"]},
-        poder:{present:["puedo","puedes","puede","podemos","podéis","pueden"],indefinido:["pude","pudiste","pudo","pudimos","pudisteis","pudieron"]},
-        poner:{present:["pongo","pones","pone","ponemos","ponéis","ponen"],indefinido:["puse","pusiste","puso","pusimos","pusisteis","pusieron"]},
-        conocer:{present:["conozco","conoces","conoce","conocemos","conocéis","conocen"]},
-        aparecer:{present:["aparezco","apareces","aparece","aparecemos","aparecéis","aparecen"]},
-        jugar:{present:["juego","juegas","juega","jugamos","jugáis","juegan"]},
-        volver:{present:["vuelvo","vuelves","vuelve","volvemos","volvéis","vuelven"]},
-        venir:{present:["vengo","vienes","viene","venimos","venís","vienen"],indefinido:["vine","viniste","vino","vinimos","vinisteis","vinieron"],imperfecto:["venía","venías","venía","veníamos","veníais","venían"]},
-        traer:{present:["traigo","traes","trae","traemos","traéis","traen"],indefinido:["traje","trajiste","trajo","trajimos","trajisteis","trajeron"],imperfecto:["traía","traías","traía","traíamos","traíais","traían"]},
-        tener:{present:["tengo","tienes","tiene","tenemos","tenéis","tienen"],indefinido:["tuve","tuviste","tuvo","tuvimos","tuvisteis","tuvieron"],imperfecto:["tenía","tenías","tenía","teníamos","teníais","tenían"]},
-        sentir:{present:["siento","sientes","siente","sentimos","sentís","sienten"],indefinido:["sentí","sentiste","sintió","sentimos","sentisteis","sintieron"],imperfecto:["sentía","sentías","sentía","sentíamos","sentíais","sentían"]},
-        romper:{present:["rompo","rompes","rompe","rompemos","rompéis","rompen"],indefinido:["rompí","rompiste","rompió","rompimos","rompisteis","rompieron"],imperfecto:["rompía","rompías","rompía","rompíamos","rompíais","rompían"]},
-        escribir:{present:["escribo","escribes","escribe","escribimos","escribís","escriben"],indefinido:["escribí","escribiste","escribió","escribimos","escribisteis","escribieron"],imperfecto:["escribía","escribías","escribía","escribíamos","escribíais","escribían"]},
-        dormir:{present:["duermo","duermes","duerme","dormimos","dormís","duermen"],indefinido:["dormí","dormiste","durmió","dormimos","dormisteis","durmieron"],imperfecto:["dormía","dormías","dormía","dormíamos","dormíais","dormían"]},
-        dejar:{present:["dejo","dejas","deja","dejamos","dejáis","dejan"],indefinido:["dejé","dejaste","dejó","dejamos","dejasteis","dejaron"],imperfecto:["dejaba","dejabas","dejaba","dejábamos","dejabais","dejaban"]},
-        decir:{present:["digo","dices","dice","decimos","decís","dicen"],indefinido:["dije","dijiste","dijo","dijimos","dijisteis","dijeron"],imperfecto:["decía","decías","decía","decíamos","decíais","decían"]},
-        haber:{present:["he","has","ha","hemos","habéis","han"],indefinido:["hube","hubiste","hubo","hubimos","hubisteis","hubieron"],imperfecto:["había","habías","había","habíamos","habíais","habían"]},
-        aprender:{present:["aprendo","aprendes","aprende","aprendemos","aprendéis","aprenden"],indefinido:["aprendí","aprendiste","aprendió","aprendimos","aprendisteis","aprendieron"],imperfecto:["aprendía","aprendías","aprendía","aprendíamos","aprendíais","aprendían"]},
-        entender:{present:["entiendo","entiendes","entiende","entendemos","entendéis","entienden"],indefinido:["entendí","entendiste","entendió","entendimos","entendisteis","entendieron"],imperfecto:["entendía","entendías","entendía","entendíamos","entendíais","entendían"]}
+        ser: {
+            present: ["soy", "eres", "es", "somos", "sois", "son"],
+            indefinido: ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
+            imperfecto: ["era", "eras", "era", "éramos", "erais", "eran"]
+        },
+        estar: {
+            present: ["estoy", "estás", "está", "estamos", "estáis", "están"],
+            indefinido: ["estuve", "estuviste", "estuvo", "estuvimos", "estuvisteis", "estuvieron"],
+            imperfecto: ["estaba", "estabas", "estaba", "estábamos", "estabais", "estaban"]
+        },
+        dar: {
+            present: ["doy", "das", "da", "damos", "dais", "dan"],
+            indefinido: ["di", "diste", "dio", "dimos", "disteis", "dieron"],
+            imperfecto: ["daba", "dabas", "daba", "dábamos", "dabais", "daban"]
+        },
+        ver: {
+            present: ["veo", "ves", "ve", "vemos", "veis", "ven"],
+            indefinido: ["vi", "viste", "vio", "vimos", "visteis", "vieron"],
+            imperfecto: ["veía", "veías", "veía", "veíamos", "veíais", "veían"]
+        },
+        poder: {
+            present: ["puedo", "puedes", "puede", "podemos", "podéis", "pueden"],
+            indefinido: ["pude", "pudiste", "pudo", "pudimos", "pudisteis", "pudieron"]
+        },
+        poner: {
+            present: ["pongo", "pones", "pone", "ponemos", "ponéis", "ponen"],
+            indefinido: ["puse", "pusiste", "puso", "pusimos", "pusisteis", "pusieron"]
+        },
+        conocer: {present: ["conozco", "conoces", "conoce", "conocemos", "conocéis", "conocen"]},
+        aparecer: {present: ["aparezco", "apareces", "aparece", "aparecemos", "aparecéis", "aparecen"]},
+        jugar: {present: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan"]},
+        volver: {present: ["vuelvo", "vuelves", "vuelve", "volvemos", "volvéis", "vuelven"]},
+        venir: {
+            present: ["vengo", "vienes", "viene", "venimos", "venís", "vienen"],
+            indefinido: ["vine", "viniste", "vino", "vinimos", "vinisteis", "vinieron"],
+            imperfecto: ["venía", "venías", "venía", "veníamos", "veníais", "venían"]
+        },
+        traer: {
+            present: ["traigo", "traes", "trae", "traemos", "traéis", "traen"],
+            indefinido: ["traje", "trajiste", "trajo", "trajimos", "trajisteis", "trajeron"],
+            imperfecto: ["traía", "traías", "traía", "traíamos", "traíais", "traían"]
+        },
+        tener: {
+            present: ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen"],
+            indefinido: ["tuve", "tuviste", "tuvo", "tuvimos", "tuvisteis", "tuvieron"],
+            imperfecto: ["tenía", "tenías", "tenía", "teníamos", "teníais", "tenían"]
+        },
+        sentir: {
+            present: ["siento", "sientes", "siente", "sentimos", "sentís", "sienten"],
+            indefinido: ["sentí", "sentiste", "sintió", "sentimos", "sentisteis", "sintieron"],
+            imperfecto: ["sentía", "sentías", "sentía", "sentíamos", "sentíais", "sentían"]
+        },
+        romper: {
+            present: ["rompo", "rompes", "rompe", "rompemos", "rompéis", "rompen"],
+            indefinido: ["rompí", "rompiste", "rompió", "rompimos", "rompisteis", "rompieron"],
+            imperfecto: ["rompía", "rompías", "rompía", "rompíamos", "rompíais", "rompían"]
+        },
+        escribir: {
+            present: ["escribo", "escribes", "escribe", "escribimos", "escribís", "escriben"],
+            indefinido: ["escribí", "escribiste", "escribió", "escribimos", "escribisteis", "escribieron"],
+            imperfecto: ["escribía", "escribías", "escribía", "escribíamos", "escribíais", "escribían"]
+        },
+        dormir: {
+            present: ["duermo", "duermes", "duerme", "dormimos", "dormís", "duermen"],
+            indefinido: ["dormí", "dormiste", "durmió", "dormimos", "dormisteis", "durmieron"],
+            imperfecto: ["dormía", "dormías", "dormía", "dormíamos", "dormíais", "dormían"]
+        },
+        dejar: {
+            present: ["dejo", "dejas", "deja", "dejamos", "dejáis", "dejan"],
+            indefinido: ["dejé", "dejaste", "dejó", "dejamos", "dejasteis", "dejaron"],
+            imperfecto: ["dejaba", "dejabas", "dejaba", "dejábamos", "dejabais", "dejaban"]
+        },
+        decir: {
+            present: ["digo", "dices", "dice", "decimos", "decís", "dicen"],
+            indefinido: ["dije", "dijiste", "dijo", "dijimos", "dijisteis", "dijeron"],
+            imperfecto: ["decía", "decías", "decía", "decíamos", "decíais", "decían"]
+        },
+        haber: {
+            present: ["he", "has", "ha", "hemos", "habéis", "han"],
+            indefinido: ["hube", "hubiste", "hubo", "hubimos", "hubisteis", "hubieron"],
+            imperfecto: ["había", "habías", "había", "habíamos", "habíais", "habían"]
+        },
+        aprender: {
+            present: ["aprendo", "aprendes", "aprende", "aprendemos", "aprendéis", "aprenden"],
+            indefinido: ["aprendí", "aprendiste", "aprendió", "aprendimos", "aprendisteis", "aprendieron"],
+            imperfecto: ["aprendía", "aprendías", "aprendía", "aprendíamos", "aprendíais", "aprendían"]
+        },
+        entender: {
+            present: ["entiendo", "entiendes", "entiende", "entendemos", "entendéis", "entienden"],
+            indefinido: ["entendí", "entendiste", "entendió", "entendimos", "entendisteis", "entendieron"],
+            imperfecto: ["entendía", "entendías", "entendía", "entendíamos", "entendíais", "entendían"]
+        }
     };
 
-    const irregularParticiples = {ser:"sido", ir:"ido", volver:"vuelto", ver:"visto", poner:"puesto", hacer:"hecho", abrir:"abierto", decir:"dicho", escribir:"escrito", cubrir:"cubierto", morir:"muerto", romper:"roto", resolver:"resuelto", venir:"venido", traer:"traído", tener:"tenido", sentir:"sentido", dormir:"dormido", dejar:"dejado"};
+    const irregularParticiples = {
+        ser: "sido",
+        ir: "ido",
+        volver: "vuelto",
+        ver: "visto",
+        poner: "puesto",
+        hacer: "hecho",
+        abrir: "abierto",
+        decir: "dicho",
+        escribir: "escrito",
+        cubrir: "cubierto",
+        morir: "muerto",
+        romper: "roto",
+        resolver: "resuelto",
+        venir: "venido",
+        traer: "traído",
+        tener: "tenido",
+        sentir: "sentido",
+        dormir: "dormido",
+        dejar: "dejado"
+    };
 
-    function participle(v){ return irregularParticiples[v] || (v.endsWith("ar")?v.slice(0,-2)+"ado":v.slice(0,-2)+"ido"); }
-    function gerund(v){ return v.endsWith("ar")?v.slice(0,-2)+"ando":v.slice(0,-2)+"iendo"; }
-    function normalizeAccents(str){ return str.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ñ/g,"n"); }
-    function conjugate(v,t,p){
-        if(t==="perfecto") return haber[p]+" "+participle(v);
-        if(t==="gerundio") return estarForms[p]+" "+gerund(v);
-        if(irregulars[v] && irregulars[v][t]) return irregulars[v][t][p];
-        let stem=v.slice(0,-2), end=v.slice(-2);
+    function participle(v) {
+        return irregularParticiples[v] || (v.endsWith("ar") ? v.slice(0, -2) + "ado" : v.slice(0, -2) + "ido");
+    }
+
+    function gerund(v) {
+        return v.endsWith("ar") ? v.slice(0, -2) + "ando" : v.slice(0, -2) + "iendo";
+    }
+
+    function normalizeAccents(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ñ/g, "n");
+    }
+
+    function conjugate(v, t, p) {
+        if (t === "perfecto") return haber[p] + " " + participle(v);
+        if (t === "gerundio") return estarForms[p] + " " + gerund(v);
+        if (irregulars[v] && irregulars[v][t]) return irregulars[v][t][p];
+        let stem = v.slice(0, -2), end = v.slice(-2);
         const endings = {
-            present:{ar:["o","as","a","amos","áis","an"], er:["o","es","e","emos","éis","en"], ir:["o","es","e","imos","ís","en"]},
-            indefinido:{ar:["é","aste","ó","amos","asteis","aron"], er:["í","iste","ió","imos","isteis","ieron"], ir:["í","iste","ió","imos","isteis","ieron"]},
-            imperfecto:{ar:["aba","abas","aba","ábamos","abais","aban"], er:["ía","ías","ía","íamos","íais","ían"], ir:["ía","ías","ía","íamos","íais","ían"]}
+            present: {
+                ar: ["o", "as", "a", "amos", "áis", "an"],
+                er: ["o", "es", "e", "emos", "éis", "en"],
+                ir: ["o", "es", "e", "imos", "ís", "en"]
+            },
+            indefinido: {
+                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
+                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
+                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
+            },
+            imperfecto: {
+                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
+                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
+                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
+            }
         };
-        return stem+endings[t][end][p];
+        return stem + endings[t][end][p];
     }
 
     // ---------------- SELECTOR HELPERS ----------------
-    function renderCheckboxes(containerId, items, storageKey){
+    function renderCheckboxes(containerId, items, storageKey) {
         const container = document.getElementById(containerId);
         container.innerHTML = "";
         let saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
@@ -141,7 +324,7 @@
             cb.checked = checked;
 
             // save immediately when clicked
-            cb.addEventListener("change", ()=>getSelected(containerId, storageKey));
+            cb.addEventListener("change", () => getSelected(containerId, storageKey));
 
             label.appendChild(cb);
             label.appendChild(document.createTextNode(" " + (i.l || i)));
@@ -149,48 +332,76 @@
         });
     }
 
-    function getSelected(containerId, storageKey){
+    function getSelected(containerId, storageKey) {
         const cbs = document.querySelectorAll(`#${containerId} input[type=checkbox]`);
         const selected = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
         localStorage.setItem(storageKey, JSON.stringify(selected)); // always store array
         return selected;
     }
 
-    function getSelectedVerbs() { return getSelected("verbSelector", "selectedVerbs"); }
-    function getSelectedTenses() { return getSelected("tenseSelector", "selectedTenses"); }
+    function getSelectedVerbs() {
+        return getSelected("verbSelector", "selectedVerbs");
+    }
 
-    function selectAll(containerId, storageKey){
+    function getSelectedTenses() {
+        return getSelected("tenseSelector", "selectedTenses");
+    }
+
+    function selectAll(containerId, storageKey) {
         document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = true);
         getSelected(containerId, storageKey);
     }
 
-    function selectNone(containerId, storageKey){
+    function selectNone(containerId, storageKey) {
         document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = false);
         getSelected(containerId, storageKey);
     }
-    function toggleVerbSelector(){
+
+    function toggleVerbSelector() {
         const c = document.getElementById("verbSelectorContainer");
-        c.style.display = c.style.display==="none" ? "block" : "none";
+        c.style.display = c.style.display === "none" ? "block" : "none";
         renderCheckboxes("verbSelector", getVerbList(), "selectedVerbs");
     }
-    function toggleTenseSelector(){
+
+    function toggleTenseSelector() {
         const c = document.getElementById("tenseSelectorContainer");
-        c.style.display = c.style.display==="none" ? "block" : "none";
-        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v:key,l:tenseLabels[key]}));
+        c.style.display = c.style.display === "none" ? "block" : "none";
+        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v: key, l: tenseLabels[key]}));
         renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
     }
 
-    function selectAllVerbs(){ selectAll("verbSelector","selectedVerbs"); }
-    function selectNoVerbs(){ selectNone("verbSelector","selectedVerbs"); }
-    function selectAllTenses(){ selectAll("tenseSelector","selectedTenses"); }
-    function selectNoTenses(){ selectNone("tenseSelector","selectedTenses"); }
-    function getVerbList(){ return document.getElementById("verbs").value.split(",").map(v=>v.trim()).filter(v=>v.length>0); }
+    function selectAllVerbs() {
+        selectAll("verbSelector", "selectedVerbs");
+    }
+
+    function selectNoVerbs() {
+        selectNone("verbSelector", "selectedVerbs");
+    }
+
+    function selectAllTenses() {
+        selectAll("tenseSelector", "selectedTenses");
+    }
+
+    function selectNoTenses() {
+        selectNone("tenseSelector", "selectedTenses");
+    }
+
+    function getVerbList() {
+        return document.getElementById("verbs").value.split(",").map(v => v.trim()).filter(v => v.length > 0);
+    }
 
     // ---------------- SRS & QUESTION LOGIC ----------------
     let srs = JSON.parse(localStorage.getItem("srs") || "{}"), current = {}, totalQuestions = 0, correctAnswers = 0;
 
-    function getKey(v,t,p){ return v+"|"+t+"|"+p; }
-    function getCard(v,t,p){ let k=getKey(v,t,p); if(!srs[k]) srs[k]={ease:2.5,interval:1,due:0}; return srs[k]; }
+    function getKey(v, t, p) {
+        return v + "|" + t + "|" + p;
+    }
+
+    function getCard(v, t, p) {
+        let k = getKey(v, t, p);
+        if (!srs[k]) srs[k] = {ease: 2.5, interval: 1, due: 0};
+        return srs[k];
+    }
 
     // ---------------- PICK CARD (all selected verbs & tenses) ----------------
     function pickCard(verbs, tenses) {
@@ -206,10 +417,12 @@
         // get SRS card for this combination (keep interval/ease tracking)
         const card = getCard(v, t, s.i);
 
-        return { v, t, s, card };
+        return {v, t, s, card};
     }
 
-    function updateCounter(){ document.getElementById("counter").innerText=`Questions: ${totalQuestions} | Correct: ${correctAnswers}`; }
+    function updateCounter() {
+        document.getElementById("counter").innerText = `Questions: ${totalQuestions} | Correct: ${correctAnswers}`;
+    }
 
     // ---------------- NEXT QUESTION ----------------
     function nextQ() {
@@ -238,43 +451,65 @@
         setTimeout(() => document.getElementById("answer").focus(), 0);
     }
 
-    function updateSRS(card,correct){
-        if(correct){ card.interval=Math.round(card.interval*card.ease); card.ease+=0.1; }
-        else{ card.interval=1; card.ease=Math.max(1.3,card.ease-0.2); }
-        card.due = Date.now() + card.interval*86400000;
+    function updateSRS(card, correct) {
+        if (correct) {
+            card.interval = Math.round(card.interval * card.ease);
+            card.ease += 0.1;
+        } else {
+            card.interval = 1;
+            card.ease = Math.max(1.3, card.ease - 0.2);
+        }
+        card.due = Date.now() + card.interval * 86400000;
     }
 
-    function check(){
+    function check() {
         let user = document.getElementById("answer").value.trim().toLowerCase();
-        let correct = conjugate(current.v,current.t,current.s.i);
+        let correct = conjugate(current.v, current.t, current.s.i);
         let okStrict = user === correct;
         let okLoose = normalizeAccents(user) === normalizeAccents(correct);
-        if(okStrict) document.getElementById("feedback").innerHTML="<span class='good'>Correct</span>";
-        else if(okLoose) document.getElementById("feedback").innerHTML="<span class='good'>Almost correct — check accent: <b>"+correct+"</b></span>";
-        else document.getElementById("feedback").innerHTML="<span class='bad'>Wrong → <b>"+correct+"</b></span>";
-        updateSRS(current.card,okStrict||okLoose);
-        localStorage.setItem("srs",JSON.stringify(srs));
-        totalQuestions++; if(okStrict||okLoose) correctAnswers++; updateCounter();
-        if(okStrict) setTimeout(nextQ,1000);
+
+        if (okStrict)
+            document.getElementById("feedback").innerHTML = "<span class='good'>Correct</span>";
+        else if (okLoose)
+            document.getElementById("feedback").innerHTML = "<span class='good'>Almost correct — check accent: <b>" + correct + "</b></span>";
+        else
+            document.getElementById("feedback").innerHTML = "<span class='bad'>Wrong → <b>" + correct + "</b></span>";
+
+        updateSRS(current.card, okStrict || okLoose);
+        localStorage.setItem("srs", JSON.stringify(srs));
+
+        totalQuestions++;
+        if (okStrict || okLoose) correctAnswers++;
+        updateCounter();
+
+        // Delay before next question
+        if (okStrict)
+            setTimeout(nextQ, 1000);   // exact correct → 1s
+        else if (okLoose)
+            setTimeout(nextQ, 3000); // almost correct → 3s
     }
 
     // ---------------- FULL CONJUGATION ----------------
-    function showFullConjugation(){
-        if(!current.v) return;
+    function showFullConjugation() {
+        if (!current.v) return;
         let v = current.v, t = current.t;
-        let html = "<b>"+v+" ["+tenseLabels[t]+"]</b><br>";
-        subjects.forEach(s=>{
-            html += s.p+": "+conjugate(v,t,s.i)+"<br>";
+        let html = "<b>" + v + " [" + tenseLabels[t] + "]</b><br>";
+        subjects.forEach(s => {
+            html += s.p + ": " + conjugate(v, t, s.i) + "<br>";
         });
         document.getElementById("fullConjugation").innerHTML = html;
-        document.getElementById("fullConjugation").style.display="block";
-        document.getElementById("toggleConjugationBtn").innerText="Hide full conjugation";
+        document.getElementById("fullConjugation").style.display = "block";
+        document.getElementById("toggleConjugationBtn").innerText = "Hide full conjugation";
     }
 
-    function toggleFullConjugation(){
+    function toggleFullConjugation() {
         const fc = document.getElementById("fullConjugation");
-        if(fc.style.display==="none" || fc.style.display===""){ showFullConjugation(); }
-        else { fc.style.display="none"; document.getElementById("toggleConjugationBtn").innerText="Show full conjugation"; }
+        if (fc.style.display === "none" || fc.style.display === "") {
+            showFullConjugation();
+        } else {
+            fc.style.display = "none";
+            document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
+        }
     }
 
     // ---------------- INIT ----------------
@@ -288,10 +523,17 @@
     window.check = check;
     window.toggleFullConjugation = toggleFullConjugation;
 
-    document.addEventListener("DOMContentLoaded",()=>{
+    document.addEventListener("DOMContentLoaded", () => {
         renderCheckboxes("verbSelector", getVerbList(), "selectedVerbs");
-        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v:key,l:tenseLabels[key]}));
+        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v: key, l: tenseLabels[key]}));
         renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
         nextQ();
+
+        // Trigger check() when Enter is pressed in the answer input
+        document.getElementById("answer").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                check();
+            }
+        });
     });
 </script>
