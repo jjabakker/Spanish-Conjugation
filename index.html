@@ -197,37 +197,37 @@
         gerundio:   ["Ahora ___", "En este momento ___"]
     };
 
-    const irregularParticiples = {
-        abrir:      "geopend",
-        aparecer:   "verschenen",
-        aprender:   "geleerd",
-        comer:      "gegeten",
-        dar:        "gegeven",
-        decir:      "gezegd",
-        dormir:     "geslapen",
-        entender:   "begrepen",
-        escribir:   "geschreven",
-        estar:      "geweest",
-        girar:      "gedraaid",
-        haber:      "gehad",
-        hablar:     "gesproken",
-        hacer:      "gedaan",
-        ir:         "gegaan",
-        jugar:      "gespeeld",
-        levantarse: "opgestaan",
-        poner:      "gezet",
-        romper:     "gebroken",
-        saber:      "geweten",
-        sentir:     "gevoeld",
-        ser:        "geweest",
-        tener:      "gehad",
-        traer:      "gebracht",
-        venir:      "gekomen",
-        vestirse:   "aangekleed",
-        volver:     "teruggekomen",
-        vivir:      "geleefd",
-        ver:        "gezien"
-    };
+    // const irregularParticiples = {
+    //     abrir:      "geopend",
+    //     aparecer:   "verschenen",
+    //     aprender:   "geleerd",
+    //     comer:      "gegeten",
+    //     dar:        "gegeven",
+    //     decir:      "gezegd",
+    //     dormir:     "geslapen",
+    //     entender:   "begrepen",
+    //     escribir:   "geschreven",
+    //     estar:      "geweest",
+    //     girar:      "gedraaid",
+    //     haber:      "gehad",
+    //     hablar:     "gesproken",
+    //     hacer:      "gedaan",
+    //     ir:         "gegaan",
+    //     jugar:      "gespeeld",
+    //     levantarse: "opgestaan",
+    //     poner:      "gezet",
+    //     romper:     "gebroken",
+    //     saber:      "geweten",
+    //     sentir:     "gevoeld",
+    //     ser:        "geweest",
+    //     tener:      "gehad",
+    //     traer:      "gebracht",
+    //     venir:      "gekomen",
+    //     vestirse:   "aangekleed",
+    //     volver:     "teruggekomen",
+    //     vivir:      "geleefd",
+    //     ver:        "gezien"
+    // };
 
     const spanishIrregularParticiples = {
         abrir: "abierto",
@@ -291,7 +291,7 @@
         querer:     {inf: "willen", pp: "gewild"}
     };
 
-    const irregularPast = {
+    /*const irregularPast = {
         doen:      ["deed","deed","deed","deden","deden","deden"],
         eten:      ["at","at","at","aten","aten","aten"],
         geven:     ["gaf","gaf","gaf","gaven","gaven","gaven"],
@@ -304,7 +304,7 @@
         zien:      ["zag","zag","zag","zagen","zagen","zagen"],
         zijn:      ["was","was","was","waren","waren","waren"],
         hebben:    ["had","had","had","hadden","hadden","hadden"]
-    };
+    };*/
 
     const irregulars = {
         ir: {
@@ -495,9 +495,27 @@
         return srs[k];
     }
 
+    let recentKeys = [];   // add this at the top, next to `current`
+
     function pickCard(verbs, tenses) {
-        if (verbs.length === 0 || tenses.length === 0)
-            return null;
+        if (verbs.length === 0 || tenses.length === 0) return null;
+
+        let tries = 0;
+        while (tries < 20) {  // try up to 20 times to avoid infinite loops
+            const v = verbs[Math.floor(Math.random() * verbs.length)];
+            const t = tenses[Math.floor(Math.random() * tenses.length)];
+            const s = subjects[Math.floor(Math.random() * subjects.length)];
+            const key = getKey(v, t, s.i);
+            if (!recentKeys.includes(key)) {
+                recentKeys.push(key);
+                if (recentKeys.length > 5) recentKeys.shift();  // keep last 5
+                const card = getCard(v, t, s.i);
+                return {v, t, s, card};
+            }
+            tries++;
+        }
+
+        // fallback if all recent keys were selected
         const v = verbs[Math.floor(Math.random() * verbs.length)];
         const t = tenses[Math.floor(Math.random() * tenses.length)];
         const s = subjects[Math.floor(Math.random() * subjects.length)];
@@ -679,6 +697,7 @@
 
         if (t === "indefinido" || t === "imperfecto") {
             const pastIrregular = {
+                eten: ["at","at","at","aten","aten","aten"],
                 zijn: ["was","was","was","waren","waren","waren"],
                 hebben: ["had","had","had","hadden","hadden","hadden"],
                 gaan: ["ging","ging","ging","gingen","gingen","gingen"],
