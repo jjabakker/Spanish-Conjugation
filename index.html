@@ -139,13 +139,13 @@
         {name: "poder",      irregular: true,  dutch: "kunnen", participle: "podido"},
         {name: "querer",     irregular: true,  dutch: "willen", participle: "querido"},
         {name: "romper",     irregular: true,  dutch: "breken", participle: "roto"},
-        {name: "saber",      irregular: true,  dutch: "weten", participle: "sabido"},
+        {name: "saber",      irregular: true,  dutch: "weten"},
         {name: "salir",      irregular: true,  dutch: "vertrekken", participle: "salido"},
-        {name: "sentir",     irregular: true,  dutch: "voelen", participle: "sentido"},
+        {name: "sentir",     irregular: true,  dutch: "voelen",
         {name: "ser",        irregular: true,  dutch: "zijn", participle: "sido"},
-        {name: "tener",      irregular: true,  dutch: "hebben", participle: "tenido"},
+        {name: "tener",      irregular: true,  dutch: "hebben"},
         {name: "traer",      irregular: true,  dutch: "brengen", gerund: "trayendo", participle: "traído"},
-        {name: "venir",      irregular: true,  dutch: "komen", gerund: "viniendo", participle: "venido"},
+        {name: "venir",      irregular: true,  dutch: "komen", gerund: "viniendo"},
         {name: "ver",        irregular: true,  dutch: "zien", participle: "visto"},
         {name: "vestirse",   irregular: true,  dutch: "zich aankleden"},
         {name: "vivir",      irregular: false, dutch: "leven"},
@@ -205,103 +205,86 @@
     const irregulars = {
         abrir: {
             present:    ["abro","abres","abre","abrimos","abrís","abren"],
-            perfecto:   ["abierto","abierto","abierto","abierto","abierto","abierto"],
             indefinido: ["abrí","abriste","abrió","abrimos","abristeis","abrieron"],
             imperfecto: ["abría","abrías","abría","abríamos","abríais","abrían"]
         },
         conocer: {
             present:    ["conozco","conoces","conoce","conocemos","conocéis","conocen"],
-            perfecto:   ["conocido","conocido","conocido","conocido","conocido","conocido"],
             indefinido: ["conocí","conociste","conoció","conocimos","conocisteis","conocieron"],
             imperfecto: ["conocía","conocías","conocía","conocíamos","conocíais","conocían"]
         },
         decir: {
             present:    ["digo","dices","dice","decimos","decís","dicen"],
-            perfecto:   ["dicho","dicho","dicho","dicho","dicho","dicho"],
             indefinido: ["dije","dijiste","dijo","dijimos","dijisteis","dijeron"],
             imperfecto: ["decía","decías","decía","decíamos","decíais","decían"]
         },
         estar: {
             present:    ["estoy","estás","está","estamos","estáis","están"],
-            perfecto:   ["estado","estado","estado","estado","estado","estado"],
             indefinido: ["estuve","estuviste","estuvo","estuvimos","estuvisteis","estuvieron"],
             imperfecto: ["estaba","estabas","estaba","estábamos","estabais","estaban"]
         },
         haber: {
             present:    ["he","has","ha","hemos","habéis","han"],
-            perfecto:   ["habido","habido","habido","habido","habido","habido"],
             indefinido: ["hube","hubiste","hubo","hubimos","hubisteis","hubieron"],
             imperfecto: ["había","habías","había","habíamos","habíais","habían"]
         },
         hacer: {
             present:    ["hago","haces","hace","hacemos","hacéis","hacen"],
-            perfecto:   ["hecho","hecho","hecho","hecho","hecho","hecho"],
             indefinido: ["hice","hiciste","hizo","hicimos","hicisteis","hicieron"],
             imperfecto: ["hacía","hacías","hacía","hacíamos","hacíais","hacían"]
         },
         ir: {
             present:    ["voy","vas","va","vamos","vais","van"],
-            perfecto:   ["ido","ido","ido","ido","ido","ido"],
             indefinido: ["fui","fuiste","fue","fuimos","fuisteis","fueron"],
             imperfecto: ["iba","ibas","iba","íbamos","ibais","iban"]
         },
         jugar: {
             present:    ["juego","juegas","juega","jugamos","jugáis","juegan"],
-            perfecto:   ["jugado","jugado","jugado","jugado","jugado","jugado"],
             indefinido: ["jugué","jugaste","jugó","jugamos","jugasteis","jugaron"],
             imperfecto: ["jugaba","jugabas","jugaba","jugábamos","jugabais","jugaban"]
         },
         poder: {
             present:    ["puedo","puedes","puede","podemos","podéis","pueden"],
-            perfecto:   ["podido","podido","podido","podido","podido","podido"],
             indefinido: ["pude","pudiste","pudo","pudimos","pudisteis","pudieron"],
             imperfecto: ["podía","podías","podía","podíamos","podíais","podían"]
         },
         querer: {
             present:    ["quiero","quieres","quiere","queremos","queréis","quieren"],
-            perfecto:   ["querido","querido","querido","querido","querido","querido"],
             indefinido: ["quise","quisiste","quiso","quisimos","quisisteis","quisieron"],
             imperfecto: ["quería","querías","quería","queríamos","queríais","querían"]
         },
         saber: {
             present:    ["sé","sabes","sabe","sabemos","sabéis","saben"],
-            perfecto:   ["sabido","sabido","sabido","sabido","sabido","sabido"],
             indefinido: ["supe","supiste","supo","supimos","supisteis","supieron"],
             imperfecto: ["sabía","sabías","sabía","sabíamos","sabíais","sabían"]
         },
         salir: {
             present:    ["salgo","sales","sale","salimos","salís","salen"],
-            perfecto:   ["salido","salido","salido","salido","salido","salido"],
             indefinido: ["salí","saliste","salió","salimos","salisteis","salieron"],
             imperfecto: ["salía","salías","salía","salíamos","salíais","salían"]
         },
         ser: {
             present:    ["soy","eres","es","somos","sois","son"],
-            perfecto:   ["sido","sido","sido","sido","sido","sido"],
             indefinido: ["fui","fuiste","fue","fuimos","fuisteis","fueron"],
             imperfecto: ["era","eras","era","éramos","erais","eran"]
         },
         tener: {
             present:    ["tengo","tienes","tiene","tenemos","tenéis","tienen"],
-            perfecto:   ["tenido","tenido","tenido","tenido","tenido","tenido"],
             indefinido: ["tuve","tuviste","tuvo","tuvimos","tuvisteis","tuvieron"],
             imperfecto: ["tenía","tenías","tenía","teníamos","teníais","tenían"]
         },
         traer: {
             present:    ["traigo","traes","trae","traemos","traéis","traen"],
-            perfecto:   ["traído","traído","traído","traído","traído","traído"],
             indefinido: ["traje","trajiste","trajo","trajimos","trajisteis","trajeron"],
             imperfecto: ["traía","traías","traía","traíamos","traíais","traían"]
         },
         venir: {
             present:    ["vengo","vienes","viene","venimos","venís","vienen"],
-            perfecto:   ["venido","venido","venido","venido","venido","venido"],
             indefinido: ["vine","viniste","vino","vinimos","vinisteis","vinieron"],
             imperfecto: ["venía","venías","venía","veníamos","veníais","venían"]
         },
         ver: {
             present:    ["veo","ves","ve","vemos","veis","ven"],
-            perfecto:   ["visto","visto","visto","visto","visto","visto"],
             indefinido: ["vi","viste","vio","vimos","visteis","vieron"],
             imperfecto: ["veía","veías","veía","veíamos","veíais","veían"]
         }
