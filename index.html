@@ -110,7 +110,9 @@
     aparecer,
     aprender,
     abrir,
+    buscar,
     comer,
+    comprar
     conocer,
     caber,
     dar,
@@ -131,8 +133,10 @@
     levantarse,
     poner,
     poder,
+    querer
     romper,
     saber,
+    salir,
     sentir,
     ser,
     tener,
@@ -141,9 +145,8 @@
     ver,
     vestirse,
     vivir,
-    volver,
-    salir,
-    querer"
+    volver
+    "
        style="display:none;">
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
@@ -181,7 +184,7 @@
     const irregularVerbs = [
         "ser","ir","haber","tener","hacer","decir","ver",
         "poder","saber","estar","venir","traer",
-        "poner","salir","querer","volver","dormir","sentir","jugar"
+        "poner","salir","querer","volver","dormir","sentir","jugar", "salir"
     ];
 
     const tenseLabels = {
@@ -205,37 +208,6 @@
         gerundio:   ["Ahora ___", "En este momento ___"]
     };
 
-    // const irregularParticiples = {
-    //     abrir:      "geopend",
-    //     aparecer:   "verschenen",
-    //     aprender:   "geleerd",
-    //     comer:      "gegeten",
-    //     dar:        "gegeven",
-    //     decir:      "gezegd",
-    //     dormir:     "geslapen",
-    //     entender:   "begrepen",
-    //     escribir:   "geschreven",
-    //     estar:      "geweest",
-    //     girar:      "gedraaid",
-    //     haber:      "gehad",
-    //     hablar:     "gesproken",
-    //     hacer:      "gedaan",
-    //     ir:         "gegaan",
-    //     jugar:      "gespeeld",
-    //     levantarse: "opgestaan",
-    //     poner:      "gezet",
-    //     romper:     "gebroken",
-    //     saber:      "geweten",
-    //     sentir:     "gevoeld",
-    //     ser:        "geweest",
-    //     tener:      "gehad",
-    //     traer:      "gebracht",
-    //     venir:      "gekomen",
-    //     vestirse:   "aangekleed",
-    //     volver:     "teruggekomen",
-    //     vivir:      "geleefd",
-    //     ver:        "gezien"
-    // };
 
     const spanishIrregularParticiples = {
         abrir: "abierto",
@@ -298,21 +270,6 @@
         salir:      {inf: "vertrekken", pp: "vertrokken"},
         querer:     {inf: "willen", pp: "gewild"}
     };
-
-    /*const irregularPast = {
-        doen:      ["deed","deed","deed","deden","deden","deden"],
-        eten:      ["at","at","at","aten","aten","aten"],
-        geven:     ["gaf","gaf","gaf","gaven","gaven","gaven"],
-        komen:     ["kwam","kwam","kwam","kwamen","kwamen","kwamen"],
-        schrijven: ["schreef","schreef","schreef","schreven","schreven","schreven"],
-        spreken:   ["sprak","sprak","sprak","spraken","spraken","spraken"],
-        staan:     ["stond","stond","stond","stonden","stonden","stonden"],
-        willen:    ["wil","wil","wil","willen","willen","willen"],
-        gaan:      ["ging","ging","ging","gingen","gingen","gingen"],
-        zien:      ["zag","zag","zag","zagen","zagen","zagen"],
-        zijn:      ["was","was","was","waren","waren","waren"],
-        hebben:    ["had","had","had","hadden","hadden","hadden"]
-    };*/
 
     const irregulars = {
         ir: {
@@ -386,6 +343,18 @@
             perfecto: ["traído","traído","traído","traído","traído","traído"],
             indefinido: ["traje","trajiste","trajo","trajimos","trajisteis","trajeron"],
             imperfecto: ["traía","traías","traía","traíamos","traíais","traían"]
+        },
+        querer: {
+            present: ["quiero","quieres","quiere","queremos","queréis","quieren"],
+            perfecto: ["querido","querido","querido","querido","querido","querido"],
+            indefinido: ["quise","quisiste","quiso","quisimos","quisisteis","quisieron"],
+            imperfecto: ["quería","querías","quería","queríamos","queríais","querían"]
+        },
+        salir: {
+            present: ["salgo","sales","sale","salimos","salís","salen"],
+            perfecto: ["salido","salido","salido","salido","salido","salido"],
+            indefinido: ["salí","saliste","salió","salimos","salisteis","salieron"],
+            imperfecto: ["salía","salías","salía","salíamos","salíais","salían"]
         }
         // you can continue adding more irregular verbs here
     };
@@ -683,8 +652,12 @@
 
         function presentForm() {
             if (presentIrregular[base]) return presentIrregular[base][p];
-            // regular verbs: stem + ending
-            const stem = base.replace(/en$/, "");
+
+            let stem = base.replace(/en$/, "");
+
+            // fix double consonants like 'kk' → 'k'
+            if (stem.endsWith("kk")) stem = stem.slice(0, -1);
+
             const endings = ["", "t", "t", "en", "en", "en"];
             return stem + endings[p];
         }
