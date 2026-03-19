@@ -197,8 +197,8 @@
         {name: "dar",        irregular: true,  dutch: "geven"},
         {name: "dejar",      irregular: false, dutch: "laten"},
         {name: "decidir",    irregular: false, dutch: "beslissen"},
-        {name: "decir",      irregular: true,  dutch: "zeggen"},
-        {name: "dormir",     irregular: true,  dutch: "slapen"},
+        {name: "decir",      irregular: true,  dutch: "zeggen", gerund: "diciendo"},
+        {name: "dormir",     irregular: true,  dutch: "slapen", gerund: "durmiendo"},
         {name: "entender",   irregular: false, dutch: "begrijpen"},
         {name: "escribir",   irregular: true,  dutch: "schrijven"},
         {name: "estar",      irregular: true,  dutch: "zijn"},
@@ -206,7 +206,7 @@
         {name: "haber",      irregular: true,  dutch: "hebben"},
         {name: "hacer",      irregular: true,  dutch: "doen"},
         {name: "hablar",     irregular: false, dutch: "spreken"},
-        {name: "ir",         irregular: true,  dutch: "gaan"},
+        {name: "ir",         irregular: true,  dutch: "gaan", gerund: "yendo"},
         {name: "jugar",      irregular: true,  dutch: "spelen"},
         {name: "levantar",   irregular: false, dutch: "optillen"},
         {name: "levantarse", irregular: false, dutch: "opstaan"},
@@ -219,8 +219,8 @@
         {name: "sentir",     irregular: true,  dutch: "voelen"},
         {name: "ser",        irregular: true,  dutch: "zijn"},
         {name: "tener",      irregular: true,  dutch: "hebben"},
-        {name: "traer",      irregular: true,  dutch: "brengen"},
-        {name: "venir",      irregular: true,  dutch: "komen"},
+        {name: "traer",      irregular: true,  dutch: "brengen", gerund: "trayendo"},
+        {name: "venir",      irregular: true,  dutch: "komen", gerund: "viniendo"},
         {name: "ver",        irregular: true,  dutch: "zien"},
         {name: "vestirse",   irregular: true,  dutch: "zich aankleden"},
         {name: "vivir",      irregular: false, dutch: "leven"},
@@ -444,8 +444,8 @@
     };
 
     function gerund(v) {
-        if (gerundExceptions[v])
-            return gerundExceptions[v];
+        const verbObj = verbs.find(verb => verb.name === v);
+        if (verbObj?.gerund) return verbObj.gerund;
         return v.endsWith("ar") ? v.slice(0, -2) + "ando" : v.slice(0, -2) + "iendo";
     }
 
