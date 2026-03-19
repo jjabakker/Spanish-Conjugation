@@ -101,9 +101,9 @@
 <p class="meta" id="counter">Questions: 0 | Correct: 0</p>
 
 <!-- Optional select dropdown for direct verb selection -->
-<select id="verbSelect">
-    <option value="">-- Select a verb --</option>
-</select>
+<!--<select id="verbSelect">-->
+<!--    <option value="">&#45;&#45; Select a verb &#45;&#45;</option>-->
+<!--</select>-->
 
 
 <script>
@@ -139,6 +139,7 @@
         { name: "entender",    dutch: "begrijpen", tier: 2, pattern: "stem" },
         { name: "entrar",      dutch: "binnenkomen", tier: 2, pattern: "none" },
         { name: "escribir",    dutch: "schrijven", participle: "escrito", tier: 3, pattern: "full" },
+        { name: "escuchar",    dutch: "luisteren", tier: 3, pattern: "full" },
         { name: "estar",       dutch: "zijn", tier: 1, pattern: "full" },
 
         { name: "girar",       dutch: "draaien", tier: 3, pattern: "none" },
@@ -164,6 +165,7 @@
         { name: "pensar",      dutch: "denken", tier: 2, pattern: "stem" },
         { name: "poder",       dutch: "kunnen", tier: 1, pattern: "stem" },
         { name: "poner",       dutch: "zetten", participle: "puesto", tier: 1, pattern: "full" },
+        { name: "preguntar",   dutch: "vragen", tier: 2, pattern: "none"},
 
         { name: "quedar",      dutch: "afspreken / blijven", tier: 3, pattern: "none" },
         { name: "querer",      dutch: "willen", tier: 1, pattern: "stem" },
@@ -384,13 +386,12 @@
 
 
     // ---------- Dropdown population ----------
-    const select = document.getElementById("verbSelect");
-    verbs.forEach(verb => {
-        const option = document.createElement("option");
-        option.value = verb;
-        option.textContent = verb;
-        select.appendChild(option);
-    });
+    // verbs.forEach(verb => {
+    //     const option = document.createElement("option");
+    //     option.value = verb.name;       // <-- store the name as value
+    //     option.textContent = verb.name; // <-- display the name
+    //     select.appendChild(option);
+    // });
 
     // ---------- Conjugation helper functions ----------
 
