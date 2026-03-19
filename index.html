@@ -151,6 +151,8 @@
     <div class="selector-buttons">
         <button onclick="selectAll('verbSelector','selectedVerbs')">Select All</button>
         <button onclick="selectNone('verbSelector','selectedVerbs')">Select None</button>
+        <button onclick="selectRegularVerbs()">Regular</button>
+        <button onclick="selectIrregularVerbs()">Irregular</button>
     </div>
     <div id="verbSelector"></div>
 </div>
@@ -176,6 +178,12 @@
 <p class="meta" id="counter">Questions: 0 | Correct: 0</p>
 
 <script>
+    const irregularVerbs = [
+        "ser","ir","haber","tener","hacer","decir","ver",
+        "poder","saber","estar","venir","traer",
+        "poner","salir","querer","volver","dormir","sentir","jugar"
+    ];
+
     const tenseLabels = {
         present:    "Presente",
         perfecto:   "Pretérito Perfecto",
@@ -590,6 +598,18 @@
         return "wrong";
     }
 
+    function selectRegularVerbs() {
+        const cbs = document.querySelectorAll("#verbSelector input");
+        cbs.forEach(cb => cb.checked = !irregularVerbs.includes(cb.value));
+        getSelected("verbSelector", "selectedVerbs");
+    }
+
+    function selectIrregularVerbs() {
+        const cbs = document.querySelectorAll("#verbSelector input");
+        cbs.forEach(cb => cb.checked = irregularVerbs.includes(cb.value));
+        getSelected("verbSelector", "selectedVerbs");
+    }
+
     function toggleFullConjugation() {
         const el = document.getElementById("fullConjugation");
 
@@ -604,9 +624,7 @@
 
                 subjects.forEach(s => {
                     const es = conjugate(current.v, t, s.i);
-                    const nl = getDutchTranslation(current.v, t, s.i);
-
-                    html += `${s.p}: ${es} <span style="color:gray">(${nl})</span><br>`;
+                    html += `${s.p}: ${es}<br>`;
                 });
             });
 
