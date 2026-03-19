@@ -111,47 +111,83 @@
     // ---------- Verb & Tense Data ----------
     // Each verb has: name, irregular flag, Dutch translation, optional participle and gerund
     const verbs = [
-        {name: "aparecer",   irregular: false, dutch: "verschijnen"},
-        {name: "aprender",   irregular: false, dutch: "leren"},
-        {name: "abrir",      irregular: true,  dutch: "openen", participle: "abierto"},
-        {name: "buscar",     irregular: false, dutch: "kopen"},
-        {name: "comer",      irregular: false, dutch: "eten"},
-        {name: "comprar",    irregular: false, dutch: "kopen"},
-        {name: "conocer",    irregular: true,  dutch: "kennen", participle: "conocido"},
-        {name: "caber",      irregular: false, dutch: "passen"},
-        {name: "dar",        irregular: true,  dutch: "geven", participle: "dado"},
-        {name: "dejar",      irregular: false, dutch: "laten"},
-        {name: "decidir",    irregular: false, dutch: "beslissen"},
-        {name: "decir",      irregular: true,  dutch: "zeggen", gerund: "diciendo", participle: "dicho"},
-        {name: "dormir",     irregular: true,  dutch: "slapen", gerund: "durmiendo"},
-        {name: "entender",   irregular: false, dutch: "begrijpen"},
-        {name: "escribir",   irregular: true,  dutch: "schrijven", participle: "escrito"},
-        {name: "estar",      irregular: true,  dutch: "zijn", participle: "estado"},
-        {name: "girar",      irregular: false, dutch: "draaien"},
-        {name: "haber",      irregular: true,  dutch: "hebben", participle: "habido"},
-        {name: "hacer",      irregular: true,  dutch: "doen", participle: "hecho"},
-        {name: "hablar",     irregular: false, dutch: "spreken"},
-        {name: "ir",         irregular: true,  dutch: "gaan", gerund: "yendo", participle: "ido"},
-        {name: "jugar",      irregular: true,  dutch: "spelen"},
-        {name: "levantar",   irregular: false, dutch: "optillen"},
-        {name: "levantarse", irregular: false, dutch: "opstaan"},
-        {name: "poner",      irregular: true,  dutch: "zetten", participle: "puesto"},
-        {name: "poder",      irregular: true,  dutch: "kunnen", participle: "podido"},
-        {name: "querer",     irregular: true,  dutch: "willen", participle: "querido"},
-        {name: "romper",     irregular: true,  dutch: "breken", participle: "roto"},
-        {name: "saber",      irregular: true,  dutch: "weten"},
-        {name: "salir",      irregular: true,  dutch: "vertrekken", participle: "salido"},
-        {name: "sentir",     irregular: true,  dutch: "voelen",
-        {name: "ser",        irregular: true,  dutch: "zijn", participle: "sido"},
-        {name: "tener",      irregular: true,  dutch: "hebben"},
-        {name: "traer",      irregular: true,  dutch: "brengen", gerund: "trayendo", participle: "traído"},
-        {name: "venir",      irregular: true,  dutch: "komen", gerund: "viniendo"},
-        {name: "ver",        irregular: true,  dutch: "zien", participle: "visto"},
-        {name: "vestirse",   irregular: true,  dutch: "zich aankleden"},
-        {name: "vivir",      irregular: false, dutch: "leven"},
-        {name: "volver",     irregular: true,  dutch: "terugkomen", participle: "vuelto"}
-    ];
+        { name: "abrir",       dutch: "openen", participle: "abierto" },
+        { name: "acostarse",   dutch: "naar bed gaan" },
+        { name: "aparecer",    dutch: "verschijnen" },
+        { name: "aprender",    dutch: "leren" },
 
+        { name: "bajar",       dutch: "naar beneden gaan" },
+        { name: "buscar",      dutch: "zoeken" },
+
+        { name: "caber",       dutch: "passen" },
+        { name: "cerrar",      dutch: "sluiten" },
+        { name: "comer",       dutch: "eten" },
+        { name: "comprar",     dutch: "kopen" },
+        { name: "conocer",     dutch: "kennen" },
+        { name: "contar",      dutch: "vertellen / tellen" },
+        { name: "creer",       dutch: "geloven" },
+
+        { name: "dar",         dutch: "geven", participle: "dado" },
+        { name: "decidir",     dutch: "beslissen" },
+        { name: "decir",       dutch: "zeggen", gerund: "diciendo", participle: "dicho" },
+        { name: "dejar",       dutch: "laten" },
+        { name: "dormir",      dutch: "slapen", gerund: "durmiendo" },
+        { name: "ducharse",    dutch: "douchen" },
+
+        { name: "elegir",      dutch: "kiezen", gerund: "eligiendo" },
+        { name: "empezar",     dutch: "beginnen" },
+        { name: "entender",    dutch: "begrijpen" },
+        { name: "entrar",      dutch: "binnenkomen" },
+        { name: "escribir",    dutch: "schrijven", participle: "escrito" },
+        { name: "estar",       dutch: "zijn" },
+
+        { name: "girar",       dutch: "draaien" },
+        { name: "gustar",      dutch: "leuk vinden" },
+
+        { name: "haber",       dutch: "hebben", participle: "habido" },
+        { name: "hacer",       dutch: "doen", participle: "hecho" },
+        { name: "hablar",      dutch: "spreken" },
+
+        { name: "ir",          dutch: "gaan", gerund: "yendo", participle: "ido" },
+
+        { name: "jugar",       dutch: "spelen" },
+
+        { name: "levantar",    dutch: "optillen" },
+        { name: "levantarse",  dutch: "opstaan" },
+        { name: "llevar",      dutch: "dragen / meenemen" },
+        { name: "llamarse",    dutch: "heten" },
+
+        { name: "necesitar",   dutch: "nodig hebben" },
+
+        { name: "pedir",       dutch: "vragen / bestellen", gerund: "pidiendo" },
+        { name: "pensar",      dutch: "denken" },
+        { name: "poder",       dutch: "kunnen" },
+        { name: "poner",       dutch: "zetten", participle: "puesto" },
+
+        { name: "quedar",      dutch: "afspreken / blijven" },
+        { name: "querer",      dutch: "willen" },
+
+        { name: "repetir",     dutch: "herhalen", gerund: "repetiendo" },
+        { name: "romper",      dutch: "breken", participle: "roto" },
+
+        { name: "saber",       dutch: "weten" },
+        { name: "salir",       dutch: "naar buiten gaan" },
+        { name: "sentarse",    dutch: "gaan zitten" },
+        { name: "sentir",      dutch: "voelen" },
+        { name: "ser",         dutch: "zijn", participle: "sido" },
+        { name: "subir",       dutch: "omhoog gaan" },
+
+        { name: "tener",       dutch: "hebben" },
+        { name: "tomar",       dutch: "nemen / drinken" },
+        { name: "trabajar",    dutch: "werken" },
+        { name: "traer",       dutch: "brengen", gerund: "trayendo", participle: "traído" },
+
+        { name: "venir",       dutch: "komen", gerund: "viniendo" },
+        { name: "ver",         dutch: "zien", participle: "visto" },
+        { name: "vestirse",    dutch: "zich aankleden" },
+        { name: "vivir",       dutch: "leven" },
+        { name: "volver",      dutch: "terugkomen", participle: "vuelto" }
+    ];
 
     // Map tense keys to display labels
     const tenseLabels = {
@@ -208,15 +244,40 @@
             indefinido: ["abrí","abriste","abrió","abrimos","abristeis","abrieron"],
             imperfecto: ["abría","abrías","abría","abríamos","abríais","abrían"]
         },
+        acostarse: {
+            present:    ["me acuesto","te acuestas","se acuesta","nos acostamos","os acostáis","se acuestan"],
+            indefinido: ["me acosté","te acostaste","se acostó","nos acostamos","os acostasteis","se acostaron"],
+            imperfecto: ["me acostaba","te acostabas","se acostaba","nos acostábamos","os acostabais","se acostaban"]
+        },
+        cerrar: {
+            present:    ["cierro","cierras","cierra","cerramos","cerráis","cierran"],
+            indefinido: ["cerré","cerraste","cerró","cerramos","cerrasteis","cerraron"],
+            imperfecto: ["cerraba","cerrabas","cerraba","cerrábamos","cerrabais","cerraban"]
+        },
         conocer: {
             present:    ["conozco","conoces","conoce","conocemos","conocéis","conocen"],
             indefinido: ["conocí","conociste","conoció","conocimos","conocisteis","conocieron"],
             imperfecto: ["conocía","conocías","conocía","conocíamos","conocíais","conocían"]
         },
+        contar: {
+            present:    ["cuento","cuentas","cuenta","contamos","contáis","cuentan"],
+            indefinido: ["conté","contaste","contó","contamos","contasteis","contaron"],
+            imperfecto: ["contaba","contabas","contaba","contábamos","contabais","contaban"]
+        },
         decir: {
             present:    ["digo","dices","dice","decimos","decís","dicen"],
             indefinido: ["dije","dijiste","dijo","dijimos","dijisteis","dijeron"],
             imperfecto: ["decía","decías","decía","decíamos","decíais","decían"]
+        },
+        dormir: {
+            present:    ["duermo","duermes","duerme","dormimos","dormís","duermen"],
+            indefinido: ["dormí","dormiste","durmió","dormimos","dormisteis","durmieron"],
+            imperfecto: ["dormía","dormías","dormía","dormíamos","dormíais","dormían"]
+        },
+        empezar: {
+            present:    ["empiezo","empiezas","empieza","empezamos","empezáis","empiezan"],
+            indefinido: ["empecé","empezaste","empezó","empezamos","empezasteis","empezaron"],
+            imperfecto: ["empezaba","empezabas","empezaba","empezábamos","empezabais","empezaban"]
         },
         estar: {
             present:    ["estoy","estás","está","estamos","estáis","están"],
@@ -243,10 +304,20 @@
             indefinido: ["jugué","jugaste","jugó","jugamos","jugasteis","jugaron"],
             imperfecto: ["jugaba","jugabas","jugaba","jugábamos","jugabais","jugaban"]
         },
+        pensar: {
+            present:    ["pienso","piensas","piensa","pensamos","pensáis","piensan"],
+            indefinido: ["pensé","pensaste","pensó","pensamos","pensasteis","pensaron"],
+            imperfecto: ["pensaba","pensabas","pensaba","pensábamos","pensabais","pensaban"]
+        },
         poder: {
             present:    ["puedo","puedes","puede","podemos","podéis","pueden"],
             indefinido: ["pude","pudiste","pudo","pudimos","pudisteis","pudieron"],
             imperfecto: ["podía","podías","podía","podíamos","podíais","podían"]
+        },
+        poner: {
+            present:    ["pongo","pones","pone","ponemos","ponéis","ponen"],
+            indefinido: ["puse","pusiste","puso","pusimos","pusisteis","pusieron"],
+            imperfecto: ["ponía","ponías","ponía","poníamos","poníais","ponían"]
         },
         querer: {
             present:    ["quiero","quieres","quiere","queremos","queréis","quieren"],
@@ -262,6 +333,11 @@
             present:    ["salgo","sales","sale","salimos","salís","salen"],
             indefinido: ["salí","saliste","salió","salimos","salisteis","salieron"],
             imperfecto: ["salía","salías","salía","salíamos","salíais","salían"]
+        },
+        sentarse: {
+            present:    ["me siento","te sientas","se sienta","nos sentamos","os sentáis","se sientan"],
+            indefinido: ["me senté","te sentaste","se sentó","nos sentamos","os sentasteis","se sentaron"],
+            imperfecto: ["me sentaba","te sentabas","se sentaba","nos sentábamos","os sentabais","se sentaban"]
         },
         ser: {
             present:    ["soy","eres","es","somos","sois","son"],
@@ -287,6 +363,11 @@
             present:    ["veo","ves","ve","vemos","veis","ven"],
             indefinido: ["vi","viste","vio","vimos","visteis","vieron"],
             imperfecto: ["veía","veías","veía","veíamos","veíais","veían"]
+        },
+        volver: {
+            present:    ["vuelvo","vuelves","vuelve","volvemos","volvéis","vuelven"],
+            indefinido: ["volví","volviste","volvió","volvimos","volvisteis","volvieron"],
+            imperfecto: ["volvía","volvías","volvía","volvíamos","volvíais","volvían"]
         }
     };
 
@@ -381,7 +462,7 @@
         const cbs = document.querySelectorAll("#verbSelector input");
         cbs.forEach(cb => {
             const verb = verbs.find(v => v.name === cb.value);
-            cb.checked = verb && !verb.irregular;
+            cb.checked = verb && !isVerbIrregular(verb);  // use the new function
         });
         getSelected("verbSelector", "selectedVerbs");
     }
@@ -390,9 +471,15 @@
         const cbs = document.querySelectorAll("#verbSelector input");
         cbs.forEach(cb => {
             const verb = verbs.find(v => v.name === cb.value);
-            cb.checked = verb && verb.irregular;
+            cb.checked = verb && isVerbIrregular(verb);  // use the new function
         });
         getSelected("verbSelector", "selectedVerbs");
+    }
+
+
+    function isVerbIrregular(verb) {
+        // A verb is irregular if it has a participle, gerund, or appears in the irregulars table
+        return !!(verb.participle || verb.gerund || irregulars[verb.name]);
     }
 
     // ---------- Quiz logic ----------
@@ -538,10 +625,20 @@
         return stem + endings[t][end][p];
     }
 
-    function isIrregularForm(v, t, p) {
-        const actual = conjugate(v, t, p);
-        const regular = conjugateRegular(v, t, p);
-        return actual !== regular;
+    function isIrregularForm(verbName, tense, person) {
+        const verb = verbs.find(v => v.name === verbName);
+        if (!verb)
+            return false;
+
+        // Check if verb has an irregular entry for this tense
+        if (irregulars[verbName] && irregulars[verbName][tense])
+            return true;
+
+        // Check participle / gerund
+        if (tense === "perfecto" && verb.participle) return true;
+        if (tense === "gerundio" && verb.gerund) return true;
+
+        return false;
     }
 
 
