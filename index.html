@@ -751,8 +751,10 @@
 
             // Regular Dutch -en verbs
             if (base.endsWith("en")) {
-                if (p === 0 || p === 1 || p === 2) return base.slice(0, -2); // singular: ik/jij/hij
-                return base; // plural: wij/jullie/zij
+                const stem = base.slice(0, -2); // remove 'en'
+                if (p === 0) return stem;           // ik
+                if (p === 1 || p === 2) return stem + "t"; // jij, hij/zij
+                return base;                        // wij/jullie/zij
             }
 
             // fallback
@@ -782,15 +784,24 @@
                 schrijven: ["schreef","schreef","schreef","schreven","schreven","schreven"],
                 geven:     ["gaf","gaf","gaf","gaven","gaven","gaven"],
                 willen:    ["wilde","wilde","wilde","wilden","wilden","wilden"],
-                kopen:     ["kocht","kocht","kocht","kochten","kochten","kochten"],  // comprar
-                spelen:    ["speelde","speelde","speelde","speelden","speelden","speelden"], // jugar
-                optillen:  ["tilde","tildes","tilde","tilden","tilden","tilden"],     // levantar
-                opstaan:   ["stond","stond","stond","stonden","stonden","stonden"]    // levantarse
+                kopen:     ["kocht","kocht","kocht","kochten","kochten","kochten"],
+                spelen:    ["speelde","speelde","speelde","speelden","speelden","speelden"],
+                optillen:  ["tilde","tildes","tilde","tilden","tilden","tilden"],
+                opstaan:   ["stond","stond","stond","stonden","stonden","stonden"]
             };
             if (pastIrregular[base]) return pastIrregular[base][p];
 
-            // default fallback for regular verbs
+            // --- fallback for regular verbs ---
             let stem = base.endsWith("en") ? base.slice(0, -2) : base;
+
+            // Special case: verbs ending in -eren keep the full stem
+            if (base.endsWith("eren")) {
+                return p < 3 ? stem + "de" : stem + "den";
+            }
+
+            // Double the final vowel if stem ends in a vowel (for singular past)
+            if (p < 3 && /[aeiou]$/.test(stem)) stem += stem.slice(-1);
+
             return p < 3 ? stem + "de" : stem + "den";
         }
 
@@ -830,19 +841,27 @@
     renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
 
     // --- ADD ENTER KEY HANDLER HERE ---
+    // const answerInput = document.getElementById("answer");
+    // answerInput.addEventListener("keydown", function(e) {
+    //     if (e.key === "Enter") {
+    //         const result = check(); // "correct", "almost", or "wrong"
+    //         let delay = 1000; // default for correct
+    //         if (result === "correct")
+    //             delay = 1000;
+    //         else if (result === "almost")
+    //             delay = 2000;
+    //         else if (result === "wrong")
+    //             delay = 6000;
+    //
+    //         setTimeout(nextQ, delay);
+    //     }
+    // });
+
+    // --- ENTER key triggers check only ---
     const answerInput = document.getElementById("answer");
     answerInput.addEventListener("keydown", function(e) {
         if (e.key === "Enter") {
-            const result = check(); // "correct", "almost", or "wrong"
-            let delay = 1000; // default for correct
-            if (result === "correct")
-                delay = 1000;
-            else if (result === "almost")
-                delay = 2000;
-            else if (result === "wrong")
-                delay = 6000;
-
-            setTimeout(nextQ, delay);
+            check(); // just check the answer, no automatic next question
         }
     });
 
