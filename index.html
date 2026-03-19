@@ -342,10 +342,10 @@
     function renderCheckboxes(containerId, items, storageKey) {
         const container = document.getElementById(containerId);
         container.innerHTML = "";
-        let saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        let saved = JSON.parse(localStorage.getItem(storageKey) || "null");
         items.forEach(i => {
             const value = i.v || i;
-            const checked = saved.includes(value);
+            const checked = saved === null ? true : saved.includes(value);
             const label = document.createElement("label");
             const cb = document.createElement("input");
             cb.type = "checkbox";
@@ -486,9 +486,8 @@
 
     function getSelectedTenses() {
         return getSelected("tenseSelector", "selectedTenses");
-
-
     }
+
     // ---------- Conjugate ----------
 
     function conjugate(v, t, p) {
@@ -589,7 +588,8 @@
     let recentKeys = [];   // add this at the top, next to `current`
 
     function pickCard(verbs, tenses) {
-        if (verbs.length === 0 || tenses.length === 0) return null;
+        if (verbs.length === 0 || tenses.length === 0)
+            return null;
 
         let tries = 0;
         while (tries < 20) {  // try up to 20 times to avoid infinite loops
@@ -599,7 +599,8 @@
             const key = getKey(v, t, s.i);
             if (!recentKeys.includes(key)) {
                 recentKeys.push(key);
-                if (recentKeys.length > 5) recentKeys.shift();  // keep last 5
+                if (recentKeys.length > 5)
+                    recentKeys.shift();  // keep last 5
                 const card = getCard(v, t, s.i);
                 return {v, t, s, card};
             }
@@ -630,9 +631,6 @@
     }
 
 
-
-
-
     function toggleFullConjugation() {
         const el = document.getElementById("fullConjugation");
 
@@ -641,11 +639,11 @@
 
             // short headers
             const shortLabels = {
-                present: "Presente",
-                perfecto: "Perfecto",
+                present:    "Presente",
+                perfecto:   "Perfecto",
                 indefinido: "Indefinido",
                 imperfecto: "Imperfect",
-                gerundio: "Gerundio"
+                gerundio:   "Gerundio"
             };
 
             // header row
@@ -680,7 +678,21 @@
 
 
     // initial render
-    renderCheckboxes("verbSelector", getVerbList(), "selectedVerbs");
+    const savedVerbs = JSON.parse(localStorage.getItem("selectedVerbs") || "null");
+    if (!savedVerbs || savedVerbs.length === 0) {
+        const allVerbs = verbs.map(v => v.name);
+        localStorage.setItem("selectedVerbs", JSON.stringify(allVerbs));
+    }
+
+    if (!localStorage.getItem("selectedTenses")) {
+        const allTenses = Object.keys(tenseLabels);
+        localStorage.setItem("selectedTenses", JSON.stringify(allTenses));
+    }
+    renderCheckboxes(
+        "verbSelector",
+        verbs.map(v => ({ v: v.name, l: v.name })),
+        "selectedVerbs"
+    );
     const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v: key, l: tenseLabels[key]}));
     renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
 
