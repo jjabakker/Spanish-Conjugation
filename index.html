@@ -64,7 +64,7 @@
 </head>
 <body>
 
-<h2>Spanish Trainer v7</h2>
+<h2>Spanish Verb Trainer v7</h2>
 
 <!-- Verb selector toggle button -->
 <button onclick="toggleVerbSelector()">Select verbs</button>
@@ -415,6 +415,8 @@
     // ---------- Quiz logic ----------
 
     function nextQ() {
+        answered = false;
+
         document.getElementById("fullConjugation").style.display = "none";
         document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
         const verbs = getSelectedVerbs(), tenses = getSelectedTenses();
@@ -436,6 +438,8 @@
     }
 
     function check() {
+
+        answered = true;
         if (!current || !current.v)
             return "wrong";
 
@@ -640,7 +644,7 @@
                 present: "Presente",
                 perfecto: "Perfecto",
                 indefinido: "Indefinido",
-                imperfecto: "Imperfectp",
+                imperfecto: "Imperfect",
                 gerundio: "Gerundio"
             };
 
@@ -685,7 +689,11 @@
     const answerInput = document.getElementById("answer");
     answerInput.addEventListener("keydown", function(e) {
         if (e.key === "Enter") {
-            check(); // just check the answer, no automatic next question
+            if (!answered) {
+                check();
+            } else {
+                nextQ();
+            }
         }
     });
 
