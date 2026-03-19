@@ -701,7 +701,7 @@
         let isSeparable = entry.separable || false;
         let isReflexive = entry.reflexive || false;
 
-        // --- Present tense irregular forms for common verbs ---
+        // --- Present tense irregulars for common verbs ---
         const presentIrregular = {
             zijn: ["ben","bent","is","zijn","zijn","zijn"],
             hebben: ["heb","hebt","heeft","hebben","hebben","hebben"],
@@ -715,11 +715,12 @@
             schrijven: ["schrijf","schrijft","schrijft","schrijven","schrijven","schrijven"],
             geven: ["geef","geeft","geeft","geven","geven","geven"],
             willen: ["wil","wilt","wilt","willen","willen","willen"],
-            kopen: ["koop","koopt","koopt","kopen","kopen","kopen"],   // fix comprar
-            spelen: ["speel","speelt","speelt","spelen","spelen","spelen"], // fix jugar
-            optillen: ["til","tilt","tilt","tillen","tillen","tillen"],     // levantar
+            kopen: ["koop","koopt","koopt","kopen","kopen","kopen"],
+            spelen: ["speel","speelt","speelt","spelen","spelen","spelen"],
+            optillen: ["til","tilt","tilt","tillen","tillen","tillen"],
             opstaan: ["sta","staat","staat","staan","staan","staan"],
-            kennen: ["ken","kent","kent","kennen","kennen","kennen"]// levantarse
+            kennen: ["ken","kent","kent","kennen","kennen","kennen"],
+            zeggen: ["zeg","zegt","zegt","zeggen","zeggen","zeggen"]
         };
 
         // --- Past participles (perfect) ---
@@ -739,16 +740,22 @@
             kopen:      "gekocht",
             spelen:     "gespeeld",
             optillen:   "opgetild",
-            opstaan:    "opgestaan"
+            opstaan:    "opgestaan",
+            kennen:     "gekend",
+            zeggen:     "gezegd"
         };
 
         function presentForm() {
-            // If the verb is in presentIrregular, always use the array
-            if (presentIrregular[base]) {
-                return presentIrregular[base][p];
+            const key = base.trim().toLowerCase();
+            if (presentIrregular[key]) return presentIrregular[key][p];
+
+            // Regular Dutch -en verbs
+            if (base.endsWith("en")) {
+                if (p === 0 || p === 1 || p === 2) return base.slice(0, -2); // singular: ik/jij/hij
+                return base; // plural: wij/jullie/zij
             }
 
-            // Regular fallback
+            // fallback
             let stem = base.replace(/en$/, "");
             let endings = ["", "t", "t", "en", "en", "en"];
             return stem + endings[p];
@@ -760,26 +767,8 @@
             return part;
         }
 
-        // --- Construct translation per tense ---
-        if (t === "present") {
-            let verb = presentForm();
-            if (isSeparable) verb += " " + prefix;
-            if (isReflexive) return subj[p] + " " + verb + " " + refl[p];
-            return subj[p] + " " + verb;
-        }
-
-        if (t === "perfecto") {
-            const auxZijn = ["gaan", "komen", "zijn", "blijven", "staan"];
-            const aux = auxZijn.includes(base)
-                ? ["ben","bent","is","zijn","zijn","zijn"]
-                : ["heb","hebt","heeft","hebben","hebben","hebben"];
-            let part = pastParticipleForm();
-            if (isReflexive) return subj[p] + " " + aux[p] + " " + refl[p] + " " + part;
-            return subj[p] + " " + aux[p] + " " + part;
-        }
-
-        if (t === "indefinido" || t === "imperfecto") {
-            // Dutch simple past irregulars
+        function pastForm() {
+            // Irregular past tense
             const pastIrregular = {
                 zijn:      ["was","was","was","waren","waren","waren"],
                 hebben:    ["had","had","had","hadden","hadden","hadden"],
@@ -798,11 +787,32 @@
                 optillen:  ["tilde","tildes","tilde","tilden","tilden","tilden"],     // levantar
                 opstaan:   ["stond","stond","stond","stonden","stonden","stonden"]    // levantarse
             };
-            if (pastIrregular[base]) return subj[p] + " " + pastIrregular[base][p];
-            // default regular past
-            const stem = base.replace(/en$/, "");
-            const past = (p < 3) ? stem + "de" : stem + "den";
-            return subj[p] + " " + past;
+            if (pastIrregular[base]) return pastIrregular[base][p];
+
+            // default fallback for regular verbs
+            let stem = base.endsWith("en") ? base.slice(0, -2) : base;
+            return p < 3 ? stem + "de" : stem + "den";
+        }
+
+        if (t === "present") {
+            let verb = presentForm();
+            if (isSeparable) verb += " " + prefix;
+            if (isReflexive) return subj[p] + " " + verb + " " + refl[p];
+            return subj[p] + " " + verb;
+        }
+
+        if (t === "perfecto") {
+            const auxZijn = ["gaan", "komen", "zijn", "blijven", "staan"];
+            const aux = auxZijn.includes(base)
+                ? ["ben","bent","is","zijn","zijn","zijn"]
+                : ["heb","hebt","heeft","hebben","hebben","hebben"];
+            const part = pastParticipleForm();
+            if (isReflexive) return subj[p] + " " + aux[p] + " " + refl[p] + " " + part;
+            return subj[p] + " " + aux[p] + " " + part;
+        }
+
+        if (t === "indefinido" || t === "imperfecto") {
+            return subj[p] + " " + pastForm();
         }
 
         if (t === "gerundio") {
