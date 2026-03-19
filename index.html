@@ -106,48 +106,48 @@
 
 <h2>Spanish Trainer v7</h2>
 
-<input id="verbs" value="
-    aparecer,
-    aprender,
-    abrir,
-    buscar,
-    comer,
-    comprar,
-    conocer,
-    caber,
-    dar,
-    dejar,
-    decidir,
-    decir,
-    dormir,
-    entender,
-    escribir,
-    estar,
-    girar,
-    haber,
-    hacer,
-    hablar,
-    ir,
-    jugar,
-    levantar,
-    levantarse,
-    poner,
-    poder,
-    querer
-    romper,
-    saber,
-    salir,
-    sentir,
-    ser,
-    tener,
-    traer,
-    venir,
-    ver,
-    vestirse,
-    vivir,
-    volver
-    "
-       style="display:none;">
+<!--<input id="verbs" value="-->
+<!--    aparecer,-->
+<!--    aprender,-->
+<!--    abrir,-->
+<!--    buscar,-->
+<!--    comer,-->
+<!--    comprar,-->
+<!--    conocer,-->
+<!--    caber,-->
+<!--    dar,-->
+<!--    dejar,-->
+<!--    decidir,-->
+<!--    decir,-->
+<!--    dormir,-->
+<!--    entender,-->
+<!--    escribir,-->
+<!--    estar,-->
+<!--    girar,-->
+<!--    haber,-->
+<!--    hacer,-->
+<!--    hablar,-->
+<!--    ir,-->
+<!--    jugar,-->
+<!--    levantar,-->
+<!--    levantarse,-->
+<!--    poner,-->
+<!--    poder,-->
+<!--    querer-->
+<!--    romper,-->
+<!--    saber,-->
+<!--    salir,-->
+<!--    sentir,-->
+<!--    ser,-->
+<!--    tener,-->
+<!--    traer,-->
+<!--    venir,-->
+<!--    ver,-->
+<!--    vestirse,-->
+<!--    vivir,-->
+<!--    volver-->
+<!--    "-->
+<!--       style="display:none;">-->
 
 <button onclick="toggleVerbSelector()">Select verbs</button>
 <div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
@@ -180,7 +180,61 @@
 <p id="feedback"></p>
 <p class="meta" id="counter">Questions: 0 | Correct: 0</p>
 
+<select id="verbSelect">
+    <option value="">-- Select a verb --</option>
+</select>
+
 <script>
+    const verbs = [
+        "aparecer",
+        "aprender",
+        "abrir",
+        "buscar",
+        "comer",
+        "comprar",
+        "conocer",
+        "caber",
+        "dar",
+        "dejar",
+        "decidir",
+        "decir",
+        "dormir",
+        "entender",
+        "escribir",
+        "estar",
+        "girar",
+        "haber",
+        "hacer",
+        "hablar",
+        "ir",
+        "jugar",
+        "levantar",
+        "levantarse",
+        "poner",
+        "poder",
+        "querer",
+        "romper",
+        "saber",
+        "salir",
+        "sentir",
+        "ser",
+        "tener",
+        "traer",
+        "venir",
+        "ver",
+        "vestirse",
+        "vivir",
+        "volver"
+    ];
+
+    // Populate the select dropdown dynamically
+    const select = document.getElementById("verbSelect");
+    verbs.forEach(verb => {
+        const option = document.createElement("option");
+        option.value = verb;
+        option.textContent = verb;
+        select.appendChild(option);
+    });
 
     const irregularVerbs = [
         "conocer",
@@ -339,92 +393,92 @@
             imperfecto: ["conocía","conocías","conocía","conocíamos","conocíais","conocían"]
         },
         decir: {
-            present: ["digo","dices","dice","decimos","decís","dicen"],
-            perfecto: ["dicho","dicho","dicho","dicho","dicho","dicho"],
+            present:    ["digo","dices","dice","decimos","decís","dicen"],
+            perfecto:   ["dicho","dicho","dicho","dicho","dicho","dicho"],
             indefinido: ["dije","dijiste","dijo","dijimos","dijisteis","dijeron"],
             imperfecto: ["decía","decías","decía","decíamos","decíais","decían"]
         },
         estar: {
-            present: ["estoy","estás","está","estamos","estáis","están"],
-            perfecto: ["estado","estado","estado","estado","estado","estado"],
+            present:    ["estoy","estás","está","estamos","estáis","están"],
+            perfecto:   ["estado","estado","estado","estado","estado","estado"],
             indefinido: ["estuve","estuviste","estuvo","estuvimos","estuvisteis","estuvieron"],
             imperfecto: ["estaba","estabas","estaba","estábamos","estabais","estaban"]
         },
         haber: {
-            present: ["he","has","ha","hemos","habéis","han"],
-            perfecto: ["habido","habido","habido","habido","habido","habido"],
+            present:    ["he","has","ha","hemos","habéis","han"],
+            perfecto:   ["habido","habido","habido","habido","habido","habido"],
             indefinido: ["hube","hubiste","hubo","hubimos","hubisteis","hubieron"],
             imperfecto: ["había","habías","había","habíamos","habíais","habían"]
         },
         hacer: {
-            present: ["hago","haces","hace","hacemos","hacéis","hacen"],
-            perfecto: ["hecho","hecho","hecho","hecho","hecho","hecho"],
+            present:    ["hago","haces","hace","hacemos","hacéis","hacen"],
+            perfecto:   ["hecho","hecho","hecho","hecho","hecho","hecho"],
             indefinido: ["hice","hiciste","hizo","hicimos","hicisteis","hicieron"],
             imperfecto: ["hacía","hacías","hacía","hacíamos","hacíais","hacían"]
         },
         ir: {
-            present: ["voy","vas","va","vamos","vais","van"],
-            perfecto: ["ido","ido","ido","ido","ido","ido"],
+            present:    ["voy","vas","va","vamos","vais","van"],
+            perfecto:   ["ido","ido","ido","ido","ido","ido"],
             indefinido: ["fui","fuiste","fue","fuimos","fuisteis","fueron"],
             imperfecto: ["iba","ibas","iba","íbamos","ibais","iban"]
         },
         jugar: {
-            present: ["juego","juegas","juega","jugamos","jugáis","juegan"],
-            perfecto: ["jugado","jugado","jugado","jugado","jugado","jugado"],
+            present:    ["juego","juegas","juega","jugamos","jugáis","juegan"],
+            perfecto:   ["jugado","jugado","jugado","jugado","jugado","jugado"],
             indefinido: ["jugué","jugaste","jugó","jugamos","jugasteis","jugaron"],
             imperfecto: ["jugaba","jugabas","jugaba","jugábamos","jugabais","jugaban"]
         },
         poder: {
-            present: ["puedo","puedes","puede","podemos","podéis","pueden"],
-            perfecto: ["podido","podido","podido","podido","podido","podido"],
+            present:    ["puedo","puedes","puede","podemos","podéis","pueden"],
+            perfecto:   ["podido","podido","podido","podido","podido","podido"],
             indefinido: ["pude","pudiste","pudo","pudimos","pudisteis","pudieron"],
             imperfecto: ["podía","podías","podía","podíamos","podíais","podían"]
         },
         querer: {
-            present: ["quiero","quieres","quiere","queremos","queréis","quieren"],
-            perfecto: ["querido","querido","querido","querido","querido","querido"],
+            present:    ["quiero","quieres","quiere","queremos","queréis","quieren"],
+            perfecto:   ["querido","querido","querido","querido","querido","querido"],
             indefinido: ["quise","quisiste","quiso","quisimos","quisisteis","quisieron"],
             imperfecto: ["quería","querías","quería","queríamos","queríais","querían"]
         },
         saber: {
-            present: ["sé","sabes","sabe","sabemos","sabéis","saben"],
-            perfecto: ["sabido","sabido","sabido","sabido","sabido","sabido"],
+            present:    ["sé","sabes","sabe","sabemos","sabéis","saben"],
+            perfecto:   ["sabido","sabido","sabido","sabido","sabido","sabido"],
             indefinido: ["supe","supiste","supo","supimos","supisteis","supieron"],
             imperfecto: ["sabía","sabías","sabía","sabíamos","sabíais","sabían"]
         },
         salir: {
-            present: ["salgo","sales","sale","salimos","salís","salen"],
-            perfecto: ["salido","salido","salido","salido","salido","salido"],
+            present:    ["salgo","sales","sale","salimos","salís","salen"],
+            perfecto:   ["salido","salido","salido","salido","salido","salido"],
             indefinido: ["salí","saliste","salió","salimos","salisteis","salieron"],
             imperfecto: ["salía","salías","salía","salíamos","salíais","salían"]
         },
         ser: {
-            present: ["soy","eres","es","somos","sois","son"],
-            perfecto: ["sido","sido","sido","sido","sido","sido"],
+            present:    ["soy","eres","es","somos","sois","son"],
+            perfecto:   ["sido","sido","sido","sido","sido","sido"],
             indefinido: ["fui","fuiste","fue","fuimos","fuisteis","fueron"],
             imperfecto: ["era","eras","era","éramos","erais","eran"]
         },
         tener: {
-            present: ["tengo","tienes","tiene","tenemos","tenéis","tienen"],
-            perfecto: ["tenido","tenido","tenido","tenido","tenido","tenido"],
+            present:    ["tengo","tienes","tiene","tenemos","tenéis","tienen"],
+            perfecto:   ["tenido","tenido","tenido","tenido","tenido","tenido"],
             indefinido: ["tuve","tuviste","tuvo","tuvimos","tuvisteis","tuvieron"],
             imperfecto: ["tenía","tenías","tenía","teníamos","teníais","tenían"]
         },
         traer: {
-            present: ["traigo","traes","trae","traemos","traéis","traen"],
-            perfecto: ["traído","traído","traído","traído","traído","traído"],
+            present:    ["traigo","traes","trae","traemos","traéis","traen"],
+            perfecto:   ["traído","traído","traído","traído","traído","traído"],
             indefinido: ["traje","trajiste","trajo","trajimos","trajisteis","trajeron"],
             imperfecto: ["traía","traías","traía","traíamos","traíais","traían"]
         },
         venir: {
-            present: ["vengo","vienes","viene","venimos","venís","vienen"],
-            perfecto: ["venido","venido","venido","venido","venido","venido"],
+            present:    ["vengo","vienes","viene","venimos","venís","vienen"],
+            perfecto:   ["venido","venido","venido","venido","venido","venido"],
             indefinido: ["vine","viniste","vino","vinimos","vinisteis","vinieron"],
             imperfecto: ["venía","venías","venía","veníamos","veníais","venían"]
         },
         ver: {
-            present: ["veo","ves","ve","vemos","veis","ven"],
-            perfecto: ["visto","visto","visto","visto","visto","visto"],
+            present:    ["veo","ves","ve","vemos","veis","ven"],
+            perfecto:   ["visto","visto","visto","visto","visto","visto"],
             indefinido: ["vi","viste","vio","vimos","visteis","vieron"],
             imperfecto: ["veía","veías","veía","veíamos","veíais","veían"]
         }
@@ -571,7 +625,7 @@
     }
 
     function getVerbList() {
-        return document.getElementById("verbs").value.split(",").map(v => v.trim()).filter(v => v.length > 0);
+        return verbs;
     }
 
     let srs = JSON.parse(localStorage.getItem("srs") || "{}"), current = {}, totalQuestions = 0, correctAnswers = 0;
