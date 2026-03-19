@@ -152,10 +152,11 @@
 
         { name: "jugar",       dutch: "spelen" },
 
+        { name: "llamarse",    dutch: "heten" },
         { name: "levantar",    dutch: "optillen" },
         { name: "levantarse",  dutch: "opstaan" },
+        { name: "llegar",      dutch: "arriveren" },
         { name: "llevar",      dutch: "dragen / meenemen" },
-        { name: "llamarse",    dutch: "heten" },
 
         { name: "necesitar",   dutch: "nodig hebben" },
 
@@ -201,12 +202,12 @@
 
     // Subject pronouns for conjugation
     const subjects = [
-        {p: "yo", i: 0},
-        {p: "tú", i: 1},
-        {p: "él", i: 2},
+        {p: "yo",       i: 0},
+        {p: "tú",       i: 1},
+        {p: "él",       i: 2},
         {p: "nosotros", i: 3},
         {p: "vosotros", i: 4},
-        {p: "ellos", i: 5}
+        {p: "ellos",    i: 5}
     ];
 
     // Auxiliaries used in compound tenses (haber)
@@ -304,6 +305,11 @@
             indefinido: ["jugué","jugaste","jugó","jugamos","jugasteis","jugaron"],
             imperfecto: ["jugaba","jugabas","jugaba","jugábamos","jugabais","jugaban"]
         },
+        pedir: {
+            present:    ["pido","pides","pide","pedimos","pedís","piden"],
+            indefinido: ["pedí","pediste","pidió","pedimos","pedisteis","pidieron"],
+            imperfecto: ["pedía","pedías","pedía","pedíamos","pedíais","pedían"]
+        },
         pensar: {
             present:    ["pienso","piensas","piensa","pensamos","pensáis","piensan"],
             indefinido: ["pensé","pensaste","pensó","pensamos","pensasteis","pensaron"],
@@ -384,17 +390,31 @@
     // ---------- Conjugation helper functions ----------
 
     // Returns participle of verb (irregular if defined)
-    function participle(v) {
-        const verbObj = verbs.find(verb => verb.name === v);
-        if (verbObj?.participle) return verbObj.participle;
-        return v.endsWith("ar") ? v.slice(0, -2) + "ado" : v.slice(0, -2) + "ido";
+    function participle(verb) {
+        const base = verb.endsWith("se") ? verb.slice(0, -2) : verb;
+
+        const verbObj =
+            verbs.find(v => v.name === verb) ||
+            verbs.find(v => v.name === base);
+
+        if (verbObj?.participle) {
+            return verbObj.participle;
+        }
+
+        if (base.endsWith("ar")) return base.slice(0, -2) + "ado";
+        if (base.endsWith("er") || base.endsWith("ir")) return base.slice(0, -2) + "ido";
+
+        return base;
     }
+
+    // participle("acostarse");
 
     // Returns gerund of verb (irregular if defined)
     function gerund(v) {
+        const base = v.endsWith("se") ? v.slice(0, -2) : v;
         const verbObj = verbs.find(verb => verb.name === v);
         if (verbObj?.gerund) return verbObj.gerund;
-        return v.endsWith("ar") ? v.slice(0, -2) + "ando" : v.slice(0, -2) + "iendo";
+        return base.endsWith("ar") ? base.slice(0, -2) + "ando" : base.slice(0, -2) + "iendo";
     }
 
     // Normalize accents for loose comparison
@@ -630,9 +650,15 @@
         if (!verb)
             return false;
 
-        // Check if verb has an irregular entry for this tense
-        if (irregulars[verbName] && irregulars[verbName][tense])
-            return true;
+        // Check specific form vs regular
+        if (irregulars[verbName] && irregulars[verbName][tense]) {
+            const irregularForm = irregulars[verbName][tense][person];
+            const regularForm = conjugateRegular(verbName, tense, person);
+
+            if (irregularForm !== regularForm) {
+                return true;
+            }
+        }
 
         // Check participle / gerund
         if (tense === "perfecto" && verb.participle) return true;
