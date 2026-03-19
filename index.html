@@ -337,47 +337,6 @@
         return spanishIrregularParticiples[v] || (v.endsWith("ar") ? v.slice(0,-2) + "ado" : v.slice(0,-2) + "ido");
     }
 
-    const dutchDict = {
-        aparecer:   {inf: "verschijnen"},
-        aprender:   {inf: "leren"},
-        abrir:      {inf: "openen"},
-        buscar:     {inf: "kopen"},
-        caber:      {inf: "passen"},
-        comer:      {inf: "eten"},
-        comprar:    {inf: "kopen", pp: "gekocht"},
-        conocer:    {inf: "kennen"},
-        dar:        {inf: "geven", pp: "gegeven"},
-        dejar:      {inf: "laten"},
-        decidir:    {inf: "beslissen"},
-        decir:      {inf: "zeggen", pp: "gezegd"},
-        dormir:     {inf: "slapen", pp: "geslapen"},
-        entender:   {inf: "begrijpen", pp: "begrepen"},
-        escribir:   {inf: "schrijven", pp: "geschreven"},
-        estar:      {inf: "zijn", pp: "geweest"},
-        girar:      {inf: "draaien", pp: "gedraaid"},
-        haber:      {inf: "hebben"},
-        hacer:      {inf: "doen", pp: "gedaan"},
-        hablar:     {inf: "spreken", pp: "gesproken"},
-        ir:         {inf: "gaan", pp: "gegaan"},
-        jugar:      {inf: "spelen", pp: "gespeeld"},
-        levantar:   {inf: "optillen", pp: "opgetild"},
-        levantarse: {inf: "opstaan", separable: true, reflexive: true, pp: "opgestaan"},
-        poner:      {inf: "zetten", pp: "gezet"},
-        poder:      {inf: "kunnen"},
-        querer:     {inf: "willen", pp: "gewild"},
-        romper:     {inf: "breken", pp: "gebroken"},
-        saber:      {inf: "weten", pp: "geweten"},
-        sentir:     {inf: "voelen", pp: "gevoeld"},
-        ser:        {inf: "zijn", pp: "geweest"},
-        salir:      {inf: "vertrekken", pp: "vertrokken"},
-        tener:      {inf: "hebben", pp: "gehad"},
-        traer:      {inf: "brengen", pp: "gebracht"},
-        venir:      {inf: "komen", pp: "gekomen"},
-        ver:        {inf: "zien", pp: "gezien"},
-        vestirse:   {inf: "zich aankleden", separable: true, reflexive: true, pp: "aangekleed"},
-        vivir:      {inf: "leven", pp: "geleefd"},
-        volver:     {inf: "terugkomen", pp: "teruggekomen"}
-    };
 
     const irregulars = {
         abrir: {
@@ -610,17 +569,35 @@
         document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = false);
         getSelected(containerId, storageKey);
     }
+    function selectRegularVerbs() {
+        const cbs = document.querySelectorAll("#verbSelector input");
+        cbs.forEach(cb => {
+            const verb = verbs.find(v => v.name === cb.value);
+            cb.checked = verb && !verb.irregular;
+        });
+        getSelected("verbSelector", "selectedVerbs");
+    }
+
+    function selectIrregularVerbs() {
+        const cbs = document.querySelectorAll("#verbSelector input");
+        cbs.forEach(cb => {
+            const verb = verbs.find(v => v.name === cb.value);
+            cb.checked = verb && verb.irregular;
+        });
+        getSelected("verbSelector", "selectedVerbs");
+    }
 
     function toggleVerbSelector() {
         const c = document.getElementById("verbSelectorContainer");
         c.style.display = c.style.display === "none" ? "block" : "none";
-        renderCheckboxes("verbSelector", getVerbList(), "selectedVerbs");
+        renderCheckboxes("verbSelector", verbs.map(v => ({ v: v.name, l: v.name })), "selectedVerbs");
     }
+
 
     function toggleTenseSelector() {
         const c = document.getElementById("tenseSelectorContainer");
         c.style.display = c.style.display === "none" ? "block" : "none";
-        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v: key, l: tenseLabels[key]}));
+        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({ v: key, l: tenseLabels[key] }));
         renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
     }
 
@@ -720,7 +697,7 @@
 
         let okStrict = user === correct;
         let okLoose = normalizeAccents(user) === normalizeAccents(correct);
-        const dutch = dutchDict[current.v]?.inf || "(geen vertaling)";
+        const dutch = verbs.find(v => v.name === current.v)?.dutch || "(geen vertaling)";
 
         if (okStrict) {
             document.getElementById("feedback").innerHTML =
