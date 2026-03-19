@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Spanish Trainer v7</title>
     <style>
+        /* Basic page styling */
         body {
             font-family: Arial, serif;
             max-width: 800px;
@@ -13,16 +14,10 @@
             line-height: 1.5;
         }
 
-        h2 {
-            font-size: 26px;
-        }
+        h2 { font-size: 26px; }
+        h3 { font-size: 30px; font-weight: bold; margin: 25px 0; }
 
-        h3 {
-            font-size: 30px;
-            font-weight: bold;
-            margin: 25px 0;
-        }
-
+        /* Inputs and buttons styling */
         input, button {
             padding: 14px;
             width: 100%;
@@ -32,46 +27,21 @@
             border: 1px solid #ccc;
         }
 
-        button {
-            cursor: pointer;
-            font-weight: bold;
-        }
+        button { cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #f2f2f2; }
 
-        button:hover {
-            background-color: #f2f2f2;
-        }
+        /* Feedback text styling */
+        .good { color: green; font-size: 26px; }
+        .bad { color: red; font-size: 26px; }
 
-        .good {
-            color: green;
-            font-size: 26px;
-        }
+        .meta, #counter { font-size: 18px; color: gray; }
+        .tense { font-size: 16px; color: gray; margin-left: 10px; }
 
-        .bad {
-            color: red;
-            font-size: 26px;
-        }
+        /* Verb selector layout */
+        #verbSelector { column-count: 2; column-gap: 20px; }
+        #verbSelector label { display: block; margin-bottom: 5px; }
 
-        .meta, #counter {
-            font-size: 18px;
-            color: gray;
-        }
-
-        .tense {
-            font-size: 16px;
-            color: gray;
-            margin-left: 10px;
-        }
-
-        #verbSelector {
-            column-count: 2;
-            column-gap: 20px;
-        }
-
-        #verbSelector label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
+        /* Tense selector layout (grid of checkboxes) */
         #tenseSelector {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -79,76 +49,24 @@
             margin-top: 10px;
         }
 
+        /* Button group inside selectors */
         .selector-buttons {
             display: flex;
             gap: 10px;
             margin-bottom: 10px;
         }
+        .selector-buttons button { padding: 6px; font-size: 16px; width: auto; }
 
-        .selector-buttons button {
-            padding: 6px;
-            font-size: 16px;
-            width: auto;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-        }
-
-        label input[type="checkbox"] {
-            margin-right: 8px;
-            width: auto;
-        }
+        /* Label + checkbox styling */
+        label { display: flex; align-items: center; }
+        label input[type="checkbox"] { margin-right: 8px; width: auto; }
     </style>
 </head>
 <body>
 
 <h2>Spanish Trainer v7</h2>
 
-<!--<input id="verbs" value="-->
-<!--    aparecer,-->
-<!--    aprender,-->
-<!--    abrir,-->
-<!--    buscar,-->
-<!--    comer,-->
-<!--    comprar,-->
-<!--    conocer,-->
-<!--    caber,-->
-<!--    dar,-->
-<!--    dejar,-->
-<!--    decidir,-->
-<!--    decir,-->
-<!--    dormir,-->
-<!--    entender,-->
-<!--    escribir,-->
-<!--    estar,-->
-<!--    girar,-->
-<!--    haber,-->
-<!--    hacer,-->
-<!--    hablar,-->
-<!--    ir,-->
-<!--    jugar,-->
-<!--    levantar,-->
-<!--    levantarse,-->
-<!--    poner,-->
-<!--    poder,-->
-<!--    querer-->
-<!--    romper,-->
-<!--    saber,-->
-<!--    salir,-->
-<!--    sentir,-->
-<!--    ser,-->
-<!--    tener,-->
-<!--    traer,-->
-<!--    venir,-->
-<!--    ver,-->
-<!--    vestirse,-->
-<!--    vivir,-->
-<!--    volver-->
-<!--    "-->
-<!--       style="display:none;">-->
-
+<!-- Verb selector toggle button -->
 <button onclick="toggleVerbSelector()">Select verbs</button>
 <div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
     <div class="selector-buttons">
@@ -157,18 +75,20 @@
         <button onclick="selectRegularVerbs()">Regular</button>
         <button onclick="selectIrregularVerbs()">Irregular</button>
     </div>
-    <div id="verbSelector"></div>
+    <div id="verbSelector"></div> <!-- dynamically populated checkboxes -->
 </div>
 
+<!-- Tense selector toggle button -->
 <button onclick="toggleTenseSelector()">Select tenses</button>
 <div id="tenseSelectorContainer" style="display:none; margin-bottom:15px;">
     <div class="selector-buttons">
         <button onclick="selectAll('tenseSelector','selectedTenses')">Select All</button>
         <button onclick="selectNone('tenseSelector','selectedTenses')">Select None</button>
     </div>
-    <div id="tenseSelector"></div>
+    <div id="tenseSelector"></div> <!-- dynamically populated checkboxes -->
 </div>
 
+<!-- Controls for quiz -->
 <button onclick="nextQ()">Next Question</button>
 
 <h3 id="question"></h3>
@@ -180,85 +100,60 @@
 <p id="feedback"></p>
 <p class="meta" id="counter">Questions: 0 | Correct: 0</p>
 
+<!-- Optional select dropdown for direct verb selection -->
 <select id="verbSelect">
     <option value="">-- Select a verb --</option>
 </select>
 
+
 <script>
+
+    // ---------- Verb & Tense Data ----------
+    // Each verb has: name, irregular flag, Dutch translation, optional participle and gerund
     const verbs = [
         {name: "aparecer",   irregular: false, dutch: "verschijnen"},
         {name: "aprender",   irregular: false, dutch: "leren"},
-        {name: "abrir",      irregular: true,  dutch: "openen"},
+        {name: "abrir",      irregular: true,  dutch: "openen", participle: "abierto"},
         {name: "buscar",     irregular: false, dutch: "kopen"},
         {name: "comer",      irregular: false, dutch: "eten"},
         {name: "comprar",    irregular: false, dutch: "kopen"},
-        {name: "conocer",    irregular: true,  dutch: "kennen"},
+        {name: "conocer",    irregular: true,  dutch: "kennen", participle: "conocido"},
         {name: "caber",      irregular: false, dutch: "passen"},
-        {name: "dar",        irregular: true,  dutch: "geven"},
+        {name: "dar",        irregular: true,  dutch: "geven", participle: "dado"},
         {name: "dejar",      irregular: false, dutch: "laten"},
         {name: "decidir",    irregular: false, dutch: "beslissen"},
-        {name: "decir",      irregular: true,  dutch: "zeggen", gerund: "diciendo"},
+        {name: "decir",      irregular: true,  dutch: "zeggen", gerund: "diciendo", participle: "dicho"},
         {name: "dormir",     irregular: true,  dutch: "slapen", gerund: "durmiendo"},
         {name: "entender",   irregular: false, dutch: "begrijpen"},
-        {name: "escribir",   irregular: true,  dutch: "schrijven"},
-        {name: "estar",      irregular: true,  dutch: "zijn"},
+        {name: "escribir",   irregular: true,  dutch: "schrijven", participle: "escrito"},
+        {name: "estar",      irregular: true,  dutch: "zijn", participle: "estado"},
         {name: "girar",      irregular: false, dutch: "draaien"},
-        {name: "haber",      irregular: true,  dutch: "hebben"},
-        {name: "hacer",      irregular: true,  dutch: "doen"},
+        {name: "haber",      irregular: true,  dutch: "hebben", participle: "habido"},
+        {name: "hacer",      irregular: true,  dutch: "doen", participle: "hecho"},
         {name: "hablar",     irregular: false, dutch: "spreken"},
-        {name: "ir",         irregular: true,  dutch: "gaan", gerund: "yendo"},
+        {name: "ir",         irregular: true,  dutch: "gaan", gerund: "yendo", participle: "ido"},
         {name: "jugar",      irregular: true,  dutch: "spelen"},
         {name: "levantar",   irregular: false, dutch: "optillen"},
         {name: "levantarse", irregular: false, dutch: "opstaan"},
-        {name: "poner",      irregular: true,  dutch: "zetten"},
-        {name: "poder",      irregular: true,  dutch: "kunnen"},
-        {name: "querer",     irregular: true,  dutch: "willen"},
-        {name: "romper",     irregular: true,  dutch: "breken"},
-        {name: "saber",      irregular: true,  dutch: "weten"},
-        {name: "salir",      irregular: true,  dutch: "vertrekken"},
-        {name: "sentir",     irregular: true,  dutch: "voelen"},
-        {name: "ser",        irregular: true,  dutch: "zijn"},
-        {name: "tener",      irregular: true,  dutch: "hebben"},
-        {name: "traer",      irregular: true,  dutch: "brengen", gerund: "trayendo"},
-        {name: "venir",      irregular: true,  dutch: "komen", gerund: "viniendo"},
-        {name: "ver",        irregular: true,  dutch: "zien"},
+        {name: "poner",      irregular: true,  dutch: "zetten", participle: "puesto"},
+        {name: "poder",      irregular: true,  dutch: "kunnen", participle: "podido"},
+        {name: "querer",     irregular: true,  dutch: "willen", participle: "querido"},
+        {name: "romper",     irregular: true,  dutch: "breken", participle: "roto"},
+        {name: "saber",      irregular: true,  dutch: "weten", participle: "sabido"},
+        {name: "salir",      irregular: true,  dutch: "vertrekken", participle: "salido"},
+        {name: "sentir",     irregular: true,  dutch: "voelen", participle: "sentido"},
+        {name: "ser",        irregular: true,  dutch: "zijn", participle: "sido"},
+        {name: "tener",      irregular: true,  dutch: "hebben", participle: "tenido"},
+        {name: "traer",      irregular: true,  dutch: "brengen", gerund: "trayendo", participle: "traído"},
+        {name: "venir",      irregular: true,  dutch: "komen", gerund: "viniendo", participle: "venido"},
+        {name: "ver",        irregular: true,  dutch: "zien", participle: "visto"},
         {name: "vestirse",   irregular: true,  dutch: "zich aankleden"},
         {name: "vivir",      irregular: false, dutch: "leven"},
-        {name: "volver",     irregular: true,  dutch: "terugkomen"}
+        {name: "volver",     irregular: true,  dutch: "terugkomen", participle: "vuelto"}
     ];
 
-    // Populate the select dropdown dynamically
-    const select = document.getElementById("verbSelect");
-    verbs.forEach(verb => {
-        const option = document.createElement("option");
-        option.value = verb;
-        option.textContent = verb;
-        select.appendChild(option);
-    });
 
-    const irregularVerbs = [
-        "conocer",
-        "decir",
-        "dormir",
-        "estar",
-        "hacer",
-        "haber",
-        "ir",
-        "jugar",
-        "poner",
-        "poder",
-        "querer",
-        "salir",
-        "saber",
-        "sentir",
-        "ser",
-        "tener",
-        "traer",
-        "venir",
-        "ver",
-        "volver"
-    ];
-
+    // Map tense keys to display labels
     const tenseLabels = {
         present:    "Presente",
         perfecto:   "Pretérito Perfecto",
@@ -267,6 +162,8 @@
         gerundio:   "Gerundio"
     };
 
+
+    // Subject pronouns for conjugation
     const subjects = [
         {p: "yo", i: 0},
         {p: "tú", i: 1},
@@ -276,6 +173,7 @@
         {p: "ellos", i: 5}
     ];
 
+    // Auxiliaries used in compound tenses (haber)
     const haber = [
         "he",
         "has",
@@ -285,7 +183,8 @@
         "han"
     ];
 
-    const estarForms = [
+    // Auxiliaries used in compound tenses (estar)
+    const estar = [
         "estoy",
         "estás",
         "está",
@@ -294,6 +193,7 @@
         "están"
     ];
 
+    // Sentence templates for each tense
     const sentenceTemplates = {
         present:    ["Hoy ___", "Siempre ___"],
         perfecto:   ["Hoy ___", "Esta semana ___"],
@@ -301,42 +201,6 @@
         imperfecto: ["Antes ___", "Cuando era joven ___"],
         gerundio:   ["Ahora ___", "En este momento ___"]
     };
-
-    const gerundExceptions = {
-        ir:        "yendo",
-        leer:      "leyendo",
-        oír:       "oyendo",
-        caer:      "cayendo",
-        traer:     "trayendo",
-        construir: "construyendo",
-        decir:     "diciendo",
-        pedir:     "pidiendo",
-        dormir:    "durmiendo",
-        venir:     "viniendo",
-        sentir:    "sintiendo"
-    };
-
-    const spanishIrregularParticiples = {
-        abrir:    "abierto",
-        decir:    "dicho",
-        escribir: "escrito",
-        estar:    "estado",
-        hacer:    "hecho",
-        ir:       "ido",
-        poner:    "puesto",
-        romper:   "roto",
-        ser:      "sido",
-        tener:    "tenido",
-        traer:    "traído",
-        venir:    "venido",
-        ver:      "visto",
-        volver:   "vuelto"
-    };
-
-    function participle(v) {
-        return spanishIrregularParticiples[v] || (v.endsWith("ar") ? v.slice(0,-2) + "ado" : v.slice(0,-2) + "ido");
-    }
-
 
     const irregulars = {
         abrir: {
@@ -443,85 +307,35 @@
         }
     };
 
+
+    // ---------- Dropdown population ----------
+    const select = document.getElementById("verbSelect");
+    verbs.forEach(verb => {
+        const option = document.createElement("option");
+        option.value = verb;
+        option.textContent = verb;
+        select.appendChild(option);
+    });
+
+    // ---------- Conjugation helper functions ----------
+
+    // Returns participle of verb (irregular if defined)
+    function participle(v) {
+        const verbObj = verbs.find(verb => verb.name === v);
+        if (verbObj?.participle) return verbObj.participle;
+        return v.endsWith("ar") ? v.slice(0, -2) + "ado" : v.slice(0, -2) + "ido";
+    }
+
+    // Returns gerund of verb (irregular if defined)
     function gerund(v) {
         const verbObj = verbs.find(verb => verb.name === v);
         if (verbObj?.gerund) return verbObj.gerund;
         return v.endsWith("ar") ? v.slice(0, -2) + "ando" : v.slice(0, -2) + "iendo";
     }
 
+    // Normalize accents for loose comparison
     function normalizeAccents(str) {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ñ/g, "n");
-    }
-
-    function conjugate(v, t, p) {
-        if (t === "perfecto")
-            return haber[p] + " " + participle(v);
-        if (t === "gerundio")
-            return estarForms[p] + " " + gerund(v);
-        if (irregulars[v] && irregulars[v][t])
-            return irregulars[v][t][p];
-        let stem = v.slice(0, -2), end = v.slice(-2), endings = {
-            present: {
-                ar: ["o", "as", "a", "amos", "áis", "an"],
-                er: ["o", "es", "e", "emos", "éis", "en"],
-                ir: ["o", "es", "e", "imos", "ís", "en"]
-            },
-            indefinido: {
-                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
-                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
-                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
-            },
-            imperfecto: {
-                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
-                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
-                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
-            }
-        };
-        return stem + endings[t][end][p];
-    }
-
-    function conjugateRegular(v, t, p) {
-        if (t === "perfecto") {
-            const part = v.endsWith("ar")
-                ? v.slice(0, -2) + "ado"
-                : v.slice(0, -2) + "ido";
-            return haber[p] + " " + part;
-        }
-
-        if (t === "gerundio") {
-            const g = v.endsWith("ar")
-                ? v.slice(0, -2) + "ando"
-                : v.slice(0, -2) + "iendo";
-            return estarForms[p] + " " + g;
-        }
-
-        let stem = v.slice(0, -2), end = v.slice(-2);
-
-        const endings = {
-            present: {
-                ar: ["o", "as", "a", "amos", "áis", "an"],
-                er: ["o", "es", "e", "emos", "éis", "en"],
-                ir: ["o", "es", "e", "imos", "ís", "en"]
-            },
-            indefinido: {
-                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
-                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
-                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
-            },
-            imperfecto: {
-                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
-                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
-                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
-            }
-        };
-
-        return stem + endings[t][end][p];
-    }
-
-    function isIrregularForm(v, t, p) {
-        const actual = conjugate(v, t, p);
-        const regular = conjugateRegular(v, t, p);
-        return actual !== regular;
     }
 
     // Render checkboxes dynamically
@@ -544,7 +358,7 @@
         });
     }
 
-    // Get selected verbs
+    // Save selected checkboxes to localStorage and return arrays
     function getSelected(containerId, storageKey) {
         const cbs = document.querySelectorAll(`#${containerId} input[type=checkbox]`);
         const selected = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
@@ -552,35 +366,23 @@
         return selected;
     }
 
-    // Select regular verbs
-    function selectRegularVerbs() {
-        document.querySelectorAll("#verbSelector input").forEach(cb => {
-            cb.checked = cb.dataset.irregular === "false";
-        });
-        getSelected("verbSelector", "selectedVerbs");
+    // ---------- Verb/Tense selector toggles ----------
+
+    function toggleVerbSelector() {
+        const c = document.getElementById("verbSelectorContainer");
+        c.style.display = c.style.display === "none" ? "block" : "none";
+        renderCheckboxes("verbSelector", verbs.map(v => ({ v: v.name, l: v.name })), "selectedVerbs");
     }
 
-    // Select irregular verbs
-    function selectIrregularVerbs() {
-        document.querySelectorAll("#verbSelector input").forEach(cb => {
-            cb.checked = cb.dataset.irregular === "true";
-        });
-        getSelected("verbSelector", "selectedVerbs");
+    function toggleTenseSelector() {
+        const c = document.getElementById("tenseSelectorContainer");
+        c.style.display = c.style.display === "none" ? "block" : "none";
+        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({ v: key, l: tenseLabels[key] }));
+        renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
     }
 
-    // Example: get Dutch translation
-    function getDutchTranslation(verbName) {
-        const v = verbs.find(v => v.name === verbName);
-        return v ? v.dutch : "(geen vertaling)";
-    }
 
-    function getSelectedVerbs() {
-        return getSelected("verbSelector", "selectedVerbs");
-    }
-
-    function getSelectedTenses() {
-        return getSelected("tenseSelector", "selectedTenses");
-    }
+    // ---------- Select helpers ----------
 
     function selectAll(containerId, storageKey) {
         document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = true);
@@ -591,6 +393,7 @@
         document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = false);
         getSelected(containerId, storageKey);
     }
+
     function selectRegularVerbs() {
         const cbs = document.querySelectorAll("#verbSelector input");
         cbs.forEach(cb => {
@@ -609,79 +412,7 @@
         getSelected("verbSelector", "selectedVerbs");
     }
 
-    function toggleVerbSelector() {
-        const c = document.getElementById("verbSelectorContainer");
-        c.style.display = c.style.display === "none" ? "block" : "none";
-        renderCheckboxes("verbSelector", verbs.map(v => ({ v: v.name, l: v.name })), "selectedVerbs");
-    }
-
-
-    function toggleTenseSelector() {
-        const c = document.getElementById("tenseSelectorContainer");
-        c.style.display = c.style.display === "none" ? "block" : "none";
-        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({ v: key, l: tenseLabels[key] }));
-        renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
-    }
-
-    function getVerbList() {
-        return verbs;
-    }
-
-    let srs = JSON.parse(localStorage.getItem("srs") || "{}"), current = {}, totalQuestions = 0, correctAnswers = 0;
-
-    function getKey(v, t, p) {
-        return v + "|" + t + "|" + p;
-    }
-
-    function getCard(v, t, p) {
-        let k = getKey(v, t, p);
-        if (!srs[k]) srs[k] =
-            {ease: 2.5, interval: 1, due: 0};
-        return srs[k];
-    }
-
-    let recentKeys = [];   // add this at the top, next to `current`
-
-    function pickCard(verbs, tenses) {
-        if (verbs.length === 0 || tenses.length === 0) return null;
-
-        let tries = 0;
-        while (tries < 20) {  // try up to 20 times to avoid infinite loops
-            const v = verbs[Math.floor(Math.random() * verbs.length)];
-            const t = tenses[Math.floor(Math.random() * tenses.length)];
-            const s = subjects[Math.floor(Math.random() * subjects.length)];
-            const key = getKey(v, t, s.i);
-            if (!recentKeys.includes(key)) {
-                recentKeys.push(key);
-                if (recentKeys.length > 5) recentKeys.shift();  // keep last 5
-                const card = getCard(v, t, s.i);
-                return {v, t, s, card};
-            }
-            tries++;
-        }
-
-        // fallback if all recent keys were selected
-        const v = verbs[Math.floor(Math.random() * verbs.length)];
-        const t = tenses[Math.floor(Math.random() * tenses.length)];
-        const s = subjects[Math.floor(Math.random() * subjects.length)];
-        const card = getCard(v, t, s.i);
-        return {v, t, s, card};
-    }
-
-    function updateCounter() {
-        document.getElementById("counter").innerText = `Questions: ${totalQuestions} | Correct: ${correctAnswers}`;
-    }
-
-    function updateSRS(card, correct) {
-        if (correct) {
-            card.interval = Math.round(card.interval * card.ease);
-            card.ease += 0.1;
-        } else {
-            card.interval = 1;
-            card.ease = Math.max(1.3, card.ease - 0.2);
-        }
-        localStorage.setItem("srs", JSON.stringify(srs));
-    }
+    // ---------- Quiz logic ----------
 
     function nextQ() {
         document.getElementById("fullConjugation").style.display = "none";
@@ -744,6 +475,157 @@
             return "almost";
         return "wrong";
     }
+
+    function getSelectedVerbs() {
+        return getSelected("verbSelector", "selectedVerbs");
+    }
+
+    function getSelectedTenses() {
+        return getSelected("tenseSelector", "selectedTenses");
+
+
+    }
+    // ---------- Conjugate ----------
+
+    function conjugate(v, t, p) {
+        if (t === "perfecto")
+            return haber[p] + " " + participle(v);
+        if (t === "gerundio")
+            return estar[p] + " " + gerund(v);
+        if (irregulars[v] && irregulars[v][t])
+            return irregulars[v][t][p];
+        let stem = v.slice(0, -2), end = v.slice(-2), endings = {
+            present: {
+                ar: ["o", "as", "a", "amos", "áis", "an"],
+                er: ["o", "es", "e", "emos", "éis", "en"],
+                ir: ["o", "es", "e", "imos", "ís", "en"]
+            },
+            indefinido: {
+                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
+                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
+                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
+            },
+            imperfecto: {
+                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
+                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
+                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
+            }
+        };
+        return stem + endings[t][end][p];
+    }
+
+    function conjugateRegular(v, t, p) {
+        if (t === "perfecto") {
+            const part = v.endsWith("ar")
+                ? v.slice(0, -2) + "ado"
+                : v.slice(0, -2) + "ido";
+            return haber[p] + " " + part;
+        }
+
+        if (t === "gerundio") {
+            const g = v.endsWith("ar")
+                ? v.slice(0, -2) + "ando"
+                : v.slice(0, -2) + "iendo";
+            return estar[p] + " " + g;
+        }
+
+        let stem = v.slice(0, -2), end = v.slice(-2);
+
+        const endings = {
+            present: {
+                ar: ["o", "as", "a", "amos", "áis", "an"],
+                er: ["o", "es", "e", "emos", "éis", "en"],
+                ir: ["o", "es", "e", "imos", "ís", "en"]
+            },
+            indefinido: {
+                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
+                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
+                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
+            },
+            imperfecto: {
+                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
+                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
+                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
+            }
+        };
+
+        return stem + endings[t][end][p];
+    }
+
+    function isIrregularForm(v, t, p) {
+        const actual = conjugate(v, t, p);
+        const regular = conjugateRegular(v, t, p);
+        return actual !== regular;
+    }
+
+
+    function getDutchTranslation(verbName) {
+        const v = verbs.find(v => v.name === verbName);
+        return v ? v.dutch : "(geen vertaling)";
+    }
+
+
+    function getVerbList() {
+        return verbs;
+    }
+
+    let srs = JSON.parse(localStorage.getItem("srs") || "{}"), current = {}, totalQuestions = 0, correctAnswers = 0;
+
+    function getKey(v, t, p) {
+        return v + "|" + t + "|" + p;
+    }
+
+    function getCard(v, t, p) {
+        let k = getKey(v, t, p);
+        if (!srs[k]) srs[k] =
+            {ease: 2.5, interval: 1, due: 0};
+        return srs[k];
+    }
+
+    let recentKeys = [];   // add this at the top, next to `current`
+
+    function pickCard(verbs, tenses) {
+        if (verbs.length === 0 || tenses.length === 0) return null;
+
+        let tries = 0;
+        while (tries < 20) {  // try up to 20 times to avoid infinite loops
+            const v = verbs[Math.floor(Math.random() * verbs.length)];
+            const t = tenses[Math.floor(Math.random() * tenses.length)];
+            const s = subjects[Math.floor(Math.random() * subjects.length)];
+            const key = getKey(v, t, s.i);
+            if (!recentKeys.includes(key)) {
+                recentKeys.push(key);
+                if (recentKeys.length > 5) recentKeys.shift();  // keep last 5
+                const card = getCard(v, t, s.i);
+                return {v, t, s, card};
+            }
+            tries++;
+        }
+
+        // fallback if all recent keys were selected
+        const v = verbs[Math.floor(Math.random() * verbs.length)];
+        const t = tenses[Math.floor(Math.random() * tenses.length)];
+        const s = subjects[Math.floor(Math.random() * subjects.length)];
+        const card = getCard(v, t, s.i);
+        return {v, t, s, card};
+    }
+
+    function updateCounter() {
+        document.getElementById("counter").innerText = `Questions: ${totalQuestions} | Correct: ${correctAnswers}`;
+    }
+
+    function updateSRS(card, correct) {
+        if (correct) {
+            card.interval = Math.round(card.interval * card.ease);
+            card.ease += 0.1;
+        } else {
+            card.interval = 1;
+            card.ease = Math.max(1.3, card.ease - 0.2);
+        }
+        localStorage.setItem("srs", JSON.stringify(srs));
+    }
+
+
 
 
 
@@ -809,4 +691,4 @@
 
 </script>
 </body>
-</html>
+</html>>
