@@ -186,45 +186,45 @@
 
 <script>
     const verbs = [
-        "aparecer",
-        "aprender",
-        "abrir",
-        "buscar",
-        "comer",
-        "comprar",
-        "conocer",
-        "caber",
-        "dar",
-        "dejar",
-        "decidir",
-        "decir",
-        "dormir",
-        "entender",
-        "escribir",
-        "estar",
-        "girar",
-        "haber",
-        "hacer",
-        "hablar",
-        "ir",
-        "jugar",
-        "levantar",
-        "levantarse",
-        "poner",
-        "poder",
-        "querer",
-        "romper",
-        "saber",
-        "salir",
-        "sentir",
-        "ser",
-        "tener",
-        "traer",
-        "venir",
-        "ver",
-        "vestirse",
-        "vivir",
-        "volver"
+        {name: "aparecer",   irregular: false, dutch: "verschijnen"},
+        {name: "aprender",   irregular: false, dutch: "leren"},
+        {name: "abrir",      irregular: true,  dutch: "openen"},
+        {name: "buscar",     irregular: false, dutch: "kopen"},
+        {name: "comer",      irregular: false, dutch: "eten"},
+        {name: "comprar",    irregular: false, dutch: "kopen"},
+        {name: "conocer",    irregular: true,  dutch: "kennen"},
+        {name: "caber",      irregular: false, dutch: "passen"},
+        {name: "dar",        irregular: true,  dutch: "geven"},
+        {name: "dejar",      irregular: false, dutch: "laten"},
+        {name: "decidir",    irregular: false, dutch: "beslissen"},
+        {name: "decir",      irregular: true,  dutch: "zeggen"},
+        {name: "dormir",     irregular: true,  dutch: "slapen"},
+        {name: "entender",   irregular: false, dutch: "begrijpen"},
+        {name: "escribir",   irregular: true,  dutch: "schrijven"},
+        {name: "estar",      irregular: true,  dutch: "zijn"},
+        {name: "girar",      irregular: false, dutch: "draaien"},
+        {name: "haber",      irregular: true,  dutch: "hebben"},
+        {name: "hacer",      irregular: true,  dutch: "doen"},
+        {name: "hablar",     irregular: false, dutch: "spreken"},
+        {name: "ir",         irregular: true,  dutch: "gaan"},
+        {name: "jugar",      irregular: true,  dutch: "spelen"},
+        {name: "levantar",   irregular: false, dutch: "optillen"},
+        {name: "levantarse", irregular: false, dutch: "opstaan"},
+        {name: "poner",      irregular: true,  dutch: "zetten"},
+        {name: "poder",      irregular: true,  dutch: "kunnen"},
+        {name: "querer",     irregular: true,  dutch: "willen"},
+        {name: "romper",     irregular: true,  dutch: "breken"},
+        {name: "saber",      irregular: true,  dutch: "weten"},
+        {name: "salir",      irregular: true,  dutch: "vertrekken"},
+        {name: "sentir",     irregular: true,  dutch: "voelen"},
+        {name: "ser",        irregular: true,  dutch: "zijn"},
+        {name: "tener",      irregular: true,  dutch: "hebben"},
+        {name: "traer",      irregular: true,  dutch: "brengen"},
+        {name: "venir",      irregular: true,  dutch: "komen"},
+        {name: "ver",        irregular: true,  dutch: "zien"},
+        {name: "vestirse",   irregular: true,  dutch: "zich aankleden"},
+        {name: "vivir",      irregular: false, dutch: "leven"},
+        {name: "volver",     irregular: true,  dutch: "terugkomen"}
     ];
 
     // Populate the select dropdown dynamically
@@ -443,8 +443,6 @@
         }
     };
 
-
-
     function gerund(v) {
         if (gerundExceptions[v])
             return gerundExceptions[v];
@@ -526,6 +524,7 @@
         return actual !== regular;
     }
 
+    // Render checkboxes dynamically
     function renderCheckboxes(containerId, items, storageKey) {
         const container = document.getElementById(containerId);
         container.innerHTML = "";
@@ -540,16 +539,39 @@
             cb.checked = checked;
             cb.addEventListener("change", () => getSelected(containerId, storageKey));
             label.appendChild(cb);
-            label.appendChild(document.createTextNode(" " + (i.l || i)));
+            label.appendChild(document.createTextNode(" " + (i.l !== undefined ? i.l : i.v)));
             container.appendChild(label);
         });
     }
 
+    // Get selected verbs
     function getSelected(containerId, storageKey) {
         const cbs = document.querySelectorAll(`#${containerId} input[type=checkbox]`);
         const selected = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
         localStorage.setItem(storageKey, JSON.stringify(selected));
         return selected;
+    }
+
+    // Select regular verbs
+    function selectRegularVerbs() {
+        document.querySelectorAll("#verbSelector input").forEach(cb => {
+            cb.checked = cb.dataset.irregular === "false";
+        });
+        getSelected("verbSelector", "selectedVerbs");
+    }
+
+    // Select irregular verbs
+    function selectIrregularVerbs() {
+        document.querySelectorAll("#verbSelector input").forEach(cb => {
+            cb.checked = cb.dataset.irregular === "true";
+        });
+        getSelected("verbSelector", "selectedVerbs");
+    }
+
+    // Example: get Dutch translation
+    function getDutchTranslation(verbName) {
+        const v = verbs.find(v => v.name === verbName);
+        return v ? v.dutch : "(geen vertaling)";
     }
 
     function getSelectedVerbs() {
@@ -723,17 +745,7 @@
         return "wrong";
     }
 
-    function selectRegularVerbs() {
-        const cbs = document.querySelectorAll("#verbSelector input");
-        cbs.forEach(cb => cb.checked = !irregularVerbs.includes(cb.value));
-        getSelected("verbSelector", "selectedVerbs");
-    }
 
-    function selectIrregularVerbs() {
-        const cbs = document.querySelectorAll("#verbSelector input");
-        cbs.forEach(cb => cb.checked = irregularVerbs.includes(cb.value));
-        getSelected("verbSelector", "selectedVerbs");
-    }
 
     function toggleFullConjugation() {
         const el = document.getElementById("fullConjugation");
