@@ -680,7 +680,7 @@
         if (!verb)
             return false;
 
-        // Check specific form vs regular
+        // Check specific form vs. regular
         if (irregulars[verbName] && irregulars[verbName][tense]) {
             const irregularForm = irregulars[verbName][tense][person];
             const regularForm = conjugateRegular(verbName, tense, person);
@@ -691,22 +691,14 @@
         }
 
         // Check participle / gerund
-        if (tense === "perfecto" && verb.participle) return true;
-        if (tense === "gerundio" && verb.gerund) return true;
+        if (tense === "perfecto" && verb.participle)
+            return true;
+        if (tense === "gerundio" && verb.gerund)
+            return true;
 
         return false;
     }
 
-
-    function getDutchTranslation(verbName) {
-        const v = verbs.find(v => v.name === verbName);
-        return v ? v.dutch : "(geen vertaling)";
-    }
-
-
-    function getVerbList() {
-        return verbs;
-    }
 
     let srs = JSON.parse(localStorage.getItem("srs") || "{}"), current = {}, totalQuestions = 0, correctAnswers = 0;
 
