@@ -793,10 +793,22 @@
             subjects.forEach(s => {
                 html += `<tr><td style="padding:2px 6px; font-weight:bold; white-space: nowrap;">${s.p}</td>`;
                 Object.keys(tenseLabels).forEach(t => {
-                    const es = conjugate(current.v, t, s.i);
-                    const irregular = isIrregularForm(current.v, t, s.i);
-                    const esColored = irregular ? `<span style="color:orange">${es}</span>` : es;
-                    html += `<td style="padding:2px 6px; white-space: nowrap;">${esColored}</td>`;
+                    let es = conjugate(current.v, t, s.i);
+
+                    if (t === "perfecto") {
+                        const verbObj = verbs.find(v => v.name === current.v);
+
+                        if (verbObj?.participle) {
+                            const parts = es.split(" "); // ["he", "comido"]
+                            es = `${parts[0]} <span style="color:orange">${parts[1]}</span>`;
+                        }
+                    } else {
+                        const irregular = isIrregularForm(current.v, t, s.i);
+                        if (irregular) {
+                            es = `<span style="color:orange">${es}</span>`;
+                        }
+                    }
+                    html += `<td style="padding:2px 6px; white-space: nowrap;">${es}</td>`;
                 });
                 html += `</tr>`;
             });
