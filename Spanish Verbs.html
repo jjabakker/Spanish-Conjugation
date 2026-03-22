@@ -64,7 +64,7 @@
 </head>
 <body>
 
-<h2>Spanish Verb Trainer v7</h2>
+<h2>Spanish Verb Trainer v8</h2>
 
 <!-- Verb selector toggle button -->
 <button onclick="toggleVerbSelector()">Select verbs</button>
@@ -74,6 +74,7 @@
         <button onclick="selectNone('verbSelector','selectedVerbs')">Select None</button>
         <button onclick="selectRegularVerbs()">Regular</button>
         <button onclick="selectIrregularVerbs()">Irregular</button>
+        <button onclick="selectPracticeVerbs()">Practice</button>
     </div>
     <div id="verbSelector"></div> <!-- dynamically populated checkboxes -->
 </div>
@@ -91,9 +92,13 @@
 <!-- Controls for quiz -->
 <button onclick="nextQ()">Next Question</button>
 
+
 <h3 id="question"></h3>
 <input id="answer" placeholder="Type answer">
 <button onclick="check()">Check</button>
+
+<button id="practiceToggleBtn" onclick="togglePractice()">Mark for Practice</button>
+
 <button id="toggleConjugationBtn" onclick="toggleFullConjugation()">Show full conjugation</button>
 
 <p id="fullConjugation" class="meta" style="display:none;"></p>
@@ -409,14 +414,6 @@
     };
 
 
-    // ---------- Dropdown population ----------
-    // verbs.forEach(verb => {
-    //     const option = document.createElement("option");
-    //     option.value = verb.name;       // <-- store the name as value
-    //     option.textContent = verb.name; // <-- display the name
-    //     select.appendChild(option);
-    // });
-
     // ---------- Conjugation helper functions ----------
 
     // Returns participle of verb (irregular if defined)
@@ -526,10 +523,21 @@
         getSelected("verbSelector", "selectedVerbs");
     }
 
-
     function isVerbIrregular(verb) {
         // A verb is irregular if it has a participle, gerund, or appears in the irregulars table
         return !!(verb.participle || verb.gerund || irregulars[verb.name]);
+    }
+
+    function getPracticeList() {
+        return JSON.parse(localStorage.getItem("practiceVerbs") || "[]");
+    }
+
+    function savePracticeList(list) {
+        localStorage.setItem("practiceVerbs", JSON.stringify(list));
+    }
+
+    function isInPractice(verb) {
+        return getPracticeList().includes(verb);
     }
 
     // ---------- Quiz logic ----------
@@ -554,6 +562,7 @@
         document.getElementById("question").innerHTML = template.replace("___", item.s.p + " ... (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>");
         document.getElementById("answer").value = "";
         document.getElementById("feedback").innerText = "";
+        updatePracticeButton();
         setTimeout(() => document.getElementById("answer").focus(), 0);
     }
 
@@ -760,6 +769,9 @@
 
 
     function toggleFullConjugation() {
+        if (!current || !current.v) {
+            return;
+        }
         const el = document.getElementById("fullConjugation");
 
         if (el.style.display === "none") {
@@ -848,6 +860,43 @@
             }
         }
     });
+
+    function togglePractice() {
+        if (!current || !current.v) return;
+
+        let list = getPracticeList();
+
+        if (list.includes(current.v)) {
+            list = list.filter(v => v !== current.v);
+        } else {
+            list.push(current.v);
+        }
+
+        savePracticeList(list);
+        updatePracticeButton();
+    }
+
+    function updatePracticeButton() {
+        const btn = document.getElementById("practiceToggleBtn");
+        if (!btn || !current || !current.v) return;
+
+        if (isInPractice(current.v)) {
+            btn.innerText = "Remove from Practice";
+        } else {
+            btn.innerText = "Mark for Practice";
+        }
+    }
+
+    function selectPracticeVerbs() {
+        const practice = getPracticeList();
+        const cbs = document.querySelectorAll("#verbSelector input");
+
+        cbs.forEach(cb => {
+            cb.checked = practice.includes(cb.value);
+        });
+
+        getSelected("verbSelector", "selectedVerbs");
+    }
 
 </script>
 </body>
