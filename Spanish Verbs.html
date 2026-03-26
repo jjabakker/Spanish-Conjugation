@@ -120,6 +120,7 @@
         { name: "acostarse",   dutch: "naar bed gaan", tier: 2, reflexive: true, pattern: "stem" },
         { name: "aparecer",    dutch: "verschijnen", tier: 3, pattern: "none" },
         { name: "aprender",    dutch: "leren", tier: 3, pattern: "none" },
+        { name: "ayudar",      dutch: "helpen", tier: 3, pattern: "none" },
 
         { name: "bajar",       dutch: "naar beneden gaan", tier: 3, pattern: "none" },
         { name: "buscar",      dutch: "zoeken", tier: 3, pattern: "yo" },
@@ -169,6 +170,7 @@
         { name: "necesitar",   dutch: "nodig hebben", tier: 2, pattern: "none" },
 
         { name: "oír",         dutch: "horen", gerund: "oyendo", participle: "oido", tier: 2, pattern: "none" },
+        { name: "olvidar",     dutch: "vergeten", tier: 2, pattern: "none" },
 
         { name: "pedir",       dutch: "vragen / bestellen", gerund: "pidiendo", tier: 2, pattern: "stem" },
         { name: "pensar",      dutch: "denken", tier: 2, pattern: "stem" },
@@ -190,6 +192,7 @@
         { name: "subir",       dutch: "omhoog gaan", tier: 3, pattern: "none" },
 
         { name: "tener",       dutch: "hebben", tier: 1, pattern: "yo" },
+        { name: "tocar",       dutch: "aantaken / spelen", tier: 2, pattern: "none" },
         { name: "tomar",       dutch: "nemen / drinken", tier: 2, pattern: "none" },
         { name: "trabajar",    dutch: "werken", tier: 2, pattern: "none" },
         { name: "traer",       dutch: "brengen", gerund: "trayendo", participle: "traído", tier: 2, pattern: "full" },
@@ -420,9 +423,7 @@
     function participle(verb) {
         const base = verb.endsWith("se") ? verb.slice(0, -2) : verb;
 
-        const verbObj =
-            verbs.find(v => v.name === verb) ||
-            verbs.find(v => v.name === base);
+        const verbObj = verbs.find(v => v.name === current.v);
 
         if (verbObj?.participle) {
             return verbObj.participle;
@@ -547,12 +548,17 @@
 
         document.getElementById("fullConjugation").style.display = "none";
         document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
-        const verbs = getSelectedVerbs(), tenses = getSelectedTenses();
-        if (verbs.length === 0 || tenses.length === 0) {
+
+
+        const selectedVerbs = getSelectedVerbs();
+        const selectedTenses = getSelectedTenses();
+
+        if (selectedVerbs.length === 0 || selectedTenses.length === 0) {
             document.getElementById("question").innerText = "Select at least one verb and one tense";
             return;
         }
-        const item = pickCard(verbs, tenses);
+        const item = pickCard(selectedVerbs, selectedTenses);
+
         if (!item) {
             document.getElementById("question").innerText = "🎉 Nothing due!";
             return;
@@ -569,8 +575,14 @@
     function check() {
 
         answered = true;
-        if (!current || !current.v)
+
+        if (!current || !current.v) {
+            document.getElementById("feedback").innerHTML =
+                "<span class='bad'>Click 'Next Question' first</span>";
             return "wrong";
+        }
+
+        answered = true;
 
         let user = document.getElementById("answer").value.trim().toLowerCase();
         let correct = conjugate(current.v, current.t, current.s.i);
