@@ -125,7 +125,7 @@
         { name: "bajar",       dutch: "naar beneden gaan", tier: 3, pattern: "none" },
         { name: "buscar",      dutch: "zoeken", tier: 3, pattern: "yo" },
 
-        { name: "caber",       dutch: "passen", tier: 3, pattern: "yo" },
+        { name: "caber",       dutch: "passen", tier: 3, pattern: "yo", futureStem: "cabr" },
         { name: "cerrar",      dutch: "sluiten", tier: 3, pattern: "stem" },
         { name: "comer",       dutch: "eten", tier: 2, pattern: "none" },
         { name: "comprar",     dutch: "kopen", tier: 2, pattern: "none" },
@@ -135,7 +135,7 @@
 
         { name: "dar",         dutch: "geven", tier: 1, pattern: "full" },
         { name: "decidir",     dutch: "beslissen", tier: 3, pattern: "none" },
-        { name: "decir",       dutch: "zeggen", gerund: "diciendo", participle: "dicho", tier: 1, pattern: "full" },
+        { name: "decir",       dutch: "zeggen", gerund: "diciendo", participle: "dicho", tier: 1, pattern: "full", futureStem: "dir" },
         { name: "dejar",       dutch: "laten", tier: 3, pattern: "none" },
         { name: "dormir",      dutch: "slapen", gerund: "durmiendo", tier: 2, pattern: "stem" },
         { name: "ducharse",    dutch: "douchen", tier: 2, reflexive: true, pattern: "none" },
@@ -151,8 +151,8 @@
         { name: "girar",       dutch: "draaien", tier: 3, pattern: "none" },
         { name: "gustar",      dutch: "leuk vinden", tier: 3, pattern: "none" },
 
-        { name: "haber",       dutch: "hebben", participle: "habido", tier: 1, pattern: "full" },
-        { name: "hacer",       dutch: "doen", participle: "hecho", tier: 1, pattern: "full" },
+        { name: "haber",       dutch: "hebben", participle: "habido", tier: 1, pattern: "full", futureStem: "habr" },
+        { name: "hacer",       dutch: "doen", participle: "hecho", tier: 1, pattern: "full", futureStem: "har" },
         { name: "hablar",      dutch: "spreken", tier: 2, pattern: "none" },
 
         { name: "ir",          dutch: "gaan", gerund: "yendo", participle: "ido", tier: 1, pattern: "full" },
@@ -174,30 +174,30 @@
 
         { name: "pedir",       dutch: "vragen / bestellen", gerund: "pidiendo", tier: 2, pattern: "stem" },
         { name: "pensar",      dutch: "denken", tier: 2, pattern: "stem" },
-        { name: "poder",       dutch: "kunnen", tier: 1, pattern: "stem" },
-        { name: "poner",       dutch: "zetten", participle: "puesto", tier: 1, pattern: "full" },
+        { name: "poder",       dutch: "kunnen", tier: 1, pattern: "stem", futureStem: "podr" },
+        { name: "poner",       dutch: "zetten", participle: "puesto", tier: 1, pattern: "full", futureStem: "pondr" },
         { name: "preguntar",   dutch: "vragen", tier: 2, pattern: "none"},
 
         { name: "quedar",      dutch: "afspreken / blijven", tier: 3, pattern: "none" },
-        { name: "querer",      dutch: "willen", tier: 1, pattern: "stem" },
+        { name: "querer",      dutch: "willen", tier: 1, pattern: "stem", futureStem: "querr" },
 
         { name: "repetir",     dutch: "herhalen", gerund: "repetiendo", tier: 2, pattern: "stem" },
         { name: "romper",      dutch: "breken", participle: "roto", tier: 3, pattern: "full" },
 
-        { name: "saber",       dutch: "weten", tier: 1, pattern: "yo" },
-        { name: "salir",       dutch: "naar buiten gaan", tier: 1, pattern: "yo" },
+        { name: "saber",       dutch: "weten", tier: 1, pattern: "yo", futureStem: "sabr" },
+        { name: "salir",       dutch: "naar buiten gaan", tier: 1, pattern: "yo", futureStem: "saldr" },
         { name: "sentarse",    dutch: "gaan zitten", tier: 2, reflexive: true, pattern: "stem" },
         { name: "sentir",      dutch: "voelen", gerund: "sintiendo", tier: 3, pattern: "stem" },
         { name: "ser",         dutch: "zijn", participle: "sido", tier: 1, pattern: "full" },
         { name: "subir",       dutch: "omhoog gaan", tier: 3, pattern: "none" },
 
-        { name: "tener",       dutch: "hebben", tier: 1, pattern: "yo" },
+        { name: "tener",       dutch: "hebben", tier: 1, pattern: "yo", futureStem: "tendr" },
         { name: "tocar",       dutch: "aantaken / spelen", tier: 2, pattern: "none" },
         { name: "tomar",       dutch: "nemen / drinken", tier: 2, pattern: "none" },
         { name: "trabajar",    dutch: "werken", tier: 2, pattern: "none" },
         { name: "traer",       dutch: "brengen", gerund: "trayendo", participle: "traído", tier: 2, pattern: "full" },
 
-        { name: "venir",       dutch: "komen", gerund: "viniendo", tier: 1, pattern: "stem" },
+        { name: "venir",       dutch: "komen", gerund: "viniendo", tier: 1, pattern: "stem", futureStem: "vendr" },
         { name: "ver",         dutch: "zien", participle: "visto", tier: 1, pattern: "full" },
         { name: "vestirse",    dutch: "zich aankleden", tier: 2, reflexive: true, pattern: "stem" },
         { name: "vivir",       dutch: "leven", tier: 2, pattern: "none" },
@@ -210,7 +210,8 @@
         perfecto:   "Pretérito Perfecto",
         indefinido: "Pretérito Indefinido",
         imperfecto: "Pretérito Imperfecto",
-        gerundio:   "Gerundio"
+        gerundio:   "Gerundio",
+        futuro:     "Futuro"
     };
 
 
@@ -250,7 +251,8 @@
         perfecto:   ["Hoy ___", "Esta semana ___"],
         indefinido: ["Ayer ___", "Anoche ___"],
         imperfecto: ["Antes ___", "Cuando era joven ___"],
-        gerundio:   ["Ahora ___", "En este momento ___"]
+        gerundio:   ["Ahora ___", "En este momento ___"],
+        futuro:     ["Mañana ___", "En el futuro ___"]
     };
 
     const irregulars = {
@@ -636,6 +638,12 @@
             return haber[p] + " " + participle(v);
         if (t === "gerundio")
             return estar[p] + " " + gerund(v);
+        if (t === "futuro") {
+            const endings = ["é","ás","á","emos","éis","án"];
+            const verbObj = verbs.find(verb => verb.name === v);
+            const stem = verbObj?.futureStem || v;
+            return stem + endings[p];
+        }
         if (irregulars[v] && irregulars[v][t])
             return irregulars[v][t][p];
         let stem = v.slice(0, -2), end = v.slice(-2), endings = {
@@ -671,6 +679,12 @@
                 ? v.slice(0, -2) + "ando"
                 : v.slice(0, -2) + "iendo";
             return estar[p] + " " + g;
+        }
+
+        if (t === "futuro") {
+            const endings = ["é","ás","á","emos","éis","án"];
+            const stem = futureStems[v] || v;
+            return stem + endings[p];
         }
 
         let stem = v.slice(0, -2), end = v.slice(-2);
@@ -716,6 +730,9 @@
             return true;
         if (tense === "gerundio" && verb.gerund)
             return true;
+        if (tense === "futuro" && verb.futureStem) {
+            return true;
+        }
 
         return false;
     }
@@ -795,7 +812,8 @@
                 perfecto:   "Perfecto",
                 indefinido: "Indefinido",
                 imperfecto: "Imperfect",
-                gerundio:   "Gerundio"
+                gerundio:   "Gerundio",
+                futuro:     "Futuro"
             };
 
             // header row
