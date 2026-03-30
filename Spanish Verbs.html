@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Spanish Trainer v7</title>
+    <title>Spanish Verb Trainer</title>
     <style>
         /* Basic page styling */
         body {
@@ -64,7 +64,7 @@
 </head>
 <body>
 
-<h2>Spanish Verb Trainer v8</h2>
+<h2>Spanish Verb Trainer</h2>
 
 <!-- Verb selector toggle button -->
 <button onclick="toggleVerbSelector()">Select verbs</button>
@@ -117,7 +117,7 @@
     // Each verb has: name, irregular flag, Dutch translation, optional participle and gerund
     const verbs = [
         { name: "abrir",       dutch: "openen", participle: "abierto", tier: 3, pattern: "full" },
-        { name: "acostarse",   dutch: "naar bed gaan", tier: 2, reflexive: true, pattern: "stem" },
+        { name: "acostarse",   dutch: "naar bed gaan", tier: 2, reflexive: true, pattern: "none" },
         { name: "aparecer",    dutch: "verschijnen", tier: 3, pattern: "none" },
         { name: "aprender",    dutch: "leren", tier: 3, pattern: "none" },
         { name: "ayudar",      dutch: "helpen", tier: 3, pattern: "none" },
@@ -169,7 +169,7 @@
 
         { name: "necesitar",   dutch: "nodig hebben", tier: 2, pattern: "none" },
 
-        { name: "oír",         dutch: "horen", gerund: "oyendo", participle: "oido", tier: 2, pattern: "none" },
+        { name: "oír",         dutch: "horen", gerund: "oyendo", participle: "oído", tier: 2, pattern: "none" },
         { name: "olvidar",     dutch: "vergeten", tier: 2, pattern: "none" },
 
         { name: "pedir",       dutch: "vragen / bestellen", gerund: "pidiendo", tier: 2, pattern: "stem" },
@@ -192,7 +192,7 @@
         { name: "subir",       dutch: "omhoog gaan", tier: 3, pattern: "none" },
 
         { name: "tener",       dutch: "hebben", tier: 1, pattern: "yo", futureStem: "tendr" },
-        { name: "tocar",       dutch: "aantaken / spelen", tier: 2, pattern: "none" },
+        { name: "tocar",       dutch: "aanraken / spelen", tier: 2, pattern: "none" },
         { name: "tomar",       dutch: "nemen / drinken", tier: 2, pattern: "none" },
         { name: "trabajar",    dutch: "werken", tier: 2, pattern: "none" },
         { name: "traer",       dutch: "brengen", gerund: "trayendo", participle: "traído", tier: 2, pattern: "full" },
@@ -223,6 +223,16 @@
         {p: "nosotros", i: 3},
         {p: "vosotros", i: 4},
         {p: "ellos",    i: 5}
+    ];
+
+    // Reflexive pronouns
+    const reflexivePronouns = [
+        "me",
+        "te",
+        "se",
+        "nos",
+        "os",
+        "se"
     ];
 
     // Auxiliaries used in compound tenses (haber)
@@ -425,7 +435,7 @@
     function participle(verb) {
         const base = verb.endsWith("se") ? verb.slice(0, -2) : verb;
 
-        const verbObj = verbs.find(v => v.name === current.v);
+        const verbObj = verbs.find(v => v.name === verb);
 
         if (verbObj?.participle) {
             return verbObj.participle;
@@ -547,6 +557,7 @@
 
     function nextQ() {
         answered = false;
+        totalQuestions++;
 
         document.getElementById("fullConjugation").style.display = "none";
         document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
@@ -576,49 +587,90 @@
 
     function check() {
 
-        answered = true;
-
-        if (!current || !current.v) {
+        if (!current.v) {
             document.getElementById("feedback").innerHTML =
                 "<span class='bad'>Click 'Next Question' first</span>";
             return "wrong";
         }
 
+        const input = document.getElementById("answer").value.trim();
+        if (!input) {
+            document.getElementById("feedback").innerHTML =
+                "<span class='bad'>Please enter an answer</span>";
+            return "wrong";
+        }
+
         answered = true;
 
-        let user = document.getElementById("answer").value.trim().toLowerCase();
-        let correct = conjugate(current.v, current.t, current.s.i);
+        let user = input.toLowerCase().trim().replace(/\s+/g, " ");
 
-        // --- NEW: automatic irregular detection ---
+        let correct = conjugate(current.v, current.t, current.s.i);
+        let correctClean = correct.toLowerCase().trim().replace(/\s+/g, " ");
+
+        // normalize
+        let userNorm = normalizeAccents(user);
+        let correctNorm = normalizeAccents(correctClean);
+
+        // detect reflexive
+        const verbObj = verbs.find(v => v.name === current.v);
+        const isReflexive = verbObj?.reflexive;
+
+        // remove pronoun from correct form
+        let correctWithoutPronoun = correctClean.replace(/^(me|te|se|nos|os)\s+/, "");
+        let withoutNorm = normalizeAccents(correctWithoutPronoun);
+
+        let expectedPronoun = reflexivePronouns[current.s.i];
+
+        // strict correct
+        let okStrict = user === correctClean;
+
+        // missing pronoun ONLY if verb form is otherwise perfect
+        let missingPronoun =
+            isReflexive &&
+            userNorm === withoutNorm &&
+            !user.startsWith(expectedPronoun + " ");
+
+        // accent issue ONLY if full structure is correct
+        let accentIssue =
+            user !== correctClean &&
+            userNorm === correctNorm &&
+            user.split(" ").length === correctClean.split(" ").length;
+        // irregular highlighting
         let irregular = isIrregularForm(current.v, current.t, current.s.i);
         let colored = irregular
             ? `<span style="color:orange"><b>${correct}</b></span>`
             : `<b>${correct}</b>`;
 
-        let okStrict = user === correct;
-        let okLoose = normalizeAccents(user) === normalizeAccents(correct);
         const dutch = verbs.find(v => v.name === current.v)?.dutch || "(geen vertaling)";
 
         if (okStrict) {
             document.getElementById("feedback").innerHTML =
                 `<span class='good'>Correct</span><br><i>Dutch: ${dutch}</i>`;
-        } else if (okLoose) {
+        }
+        else if (accentIssue) {
             document.getElementById("feedback").innerHTML =
                 `<span class='good'>Almost correct — check accent: ${colored}</span><br><i>Dutch: ${dutch}</i>`;
-        } else {
+        }
+        else if (missingPronoun) {
+            document.getElementById("feedback").innerHTML =
+                `<span class='good'>Almost correct — missing pronoun: ${colored}</span><br><i>Dutch: ${dutch}</i>`;
+        }
+        else {
             document.getElementById("feedback").innerHTML =
                 `<span class='bad'>Wrong → ${colored}</span><br><i>Dutch: ${dutch}</i>`;
         }
 
-        updateSRS(current.card, okStrict || okLoose);
-        totalQuestions++;
-        if (okStrict || okLoose)
+        let success = okStrict || missingPronoun || accentIssue;
+
+        updateSRS(current.card, success);
+
+        if (success)
             correctAnswers++;
         updateCounter();
 
         if (okStrict)
             return "correct";
-        if (okLoose)
+        if (missingPronoun || accentIssue)
             return "almost";
         return "wrong";
     }
@@ -634,77 +686,137 @@
     // ---------- Conjugate ----------
 
     function conjugate(v, t, p) {
-        if (t === "perfecto")
-            return haber[p] + " " + participle(v);
-        if (t === "gerundio")
-            return estar[p] + " " + gerund(v);
-        if (t === "futuro") {
-            const endings = ["é","ás","á","emos","éis","án"];
-            const verbObj = verbs.find(verb => verb.name === v);
-            const stem = verbObj?.futureStem || v;
-            return stem + endings[p];
-        }
-        if (irregulars[v] && irregulars[v][t])
-            return irregulars[v][t][p];
-        let stem = v.slice(0, -2), end = v.slice(-2), endings = {
-            present: {
-                ar: ["o", "as", "a", "amos", "áis", "an"],
-                er: ["o", "es", "e", "emos", "éis", "en"],
-                ir: ["o", "es", "e", "imos", "ís", "en"]
-            },
-            indefinido: {
-                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
-                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
-                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
-            },
-            imperfecto: {
-                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
-                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
-                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
+        const verbObj = verbs.find(verb => verb.name === v);
+        const isReflexive = verbObj?.reflexive;
+
+        let baseVerb = isReflexive ? v.slice(0, -2) : v;
+        let result;
+
+        // --- SPECIAL TENSES FIRST ---
+        if (t === "perfecto") {
+            result = haber[p] + " " + participle(v);
+
+            if (isReflexive) {
+                return reflexivePronouns[p] + " " + result;
             }
-        };
-        return stem + endings[t][end][p];
+        }
+        else if (t === "gerundio") {
+            result = estar[p] + " " + gerund(v);
+
+            if (isReflexive) {
+                return reflexivePronouns[p] + " " + result;
+            }
+        }
+        else if (t === "futuro") {
+            const endings = ["é","ás","á","emos","éis","án"];
+            const stem = verbObj?.futureStem || baseVerb;
+            result = stem + endings[p];
+        }
+        else {
+            // --- NORMAL TENSES ONLY ---
+            const irregularKey = v;
+
+            // ALWAYS use full verb for irregular lookup
+            if (irregulars[v] && irregulars[v][t]) {
+                result = irregulars[v][t][p];
+            }
+            else {
+                let stem = baseVerb.slice(0, -2);
+                let end = normalizeAccents(baseVerb).slice(-2);  // handles oír, etc.
+
+                // 🔥 APPLY STEM CHANGE (present only, except nosotros/vosotros)
+                if (t === "present" && verbObj?.pattern === "stem" && p !== 3 && p !== 4) {
+                    if (stem.includes("o")) {
+                        stem = stem.replace(/o([^o]*)$/, "ue$1"); // o → ue (contar, dormir, jugar)
+                    } else if (stem.includes("e")) {
+                        if (end === "ir") {
+                            stem = stem.replace(/e([^e]*)$/, "i$1"); // e → i for -ir verbs (pedir, elegir)
+                        } else {
+                            stem = stem.replace(/e([^e]*)$/, "ie$1"); // e → ie for -er/-ar verbs (entender, pensar)
+                        }
+                    }
+                }
+
+                const endings = {
+                    present: {
+                        ar: ["o", "as", "a", "amos", "áis", "an"],
+                        er: ["o", "es", "e", "emos", "éis", "en"],
+                        ir: ["o", "es", "e", "imos", "ís", "en"]
+                    },
+                    indefinido: {
+                        ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
+                        er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
+                        ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
+                    },
+                    imperfecto: {
+                        ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
+                        er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
+                        ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
+                    }
+                };
+
+                result = stem + endings[t][end][p];
+            }
+        }
+
+        // --- REFLEXIVE HANDLING LAST ---
+        if (isReflexive) {
+            // normalize spacing just in case
+            result = result.trim();
+
+            // if already starts with reflexive pronoun → DO NOTHING
+            const alreadyHasPronoun = reflexivePronouns.some(pr => result.startsWith(pr + " "));
+            if (alreadyHasPronoun) {
+                return result;
+            }
+
+            return reflexivePronouns[p] + " " + result;
+        }
+
+        return result;
     }
 
     function conjugateRegular(v, t, p) {
+        const base = v.endsWith("se") ? v.slice(0, -2) : v;
+        // Normalize accented ending for stem/ending detection
+        const baseNorm = normalizeAccents(base);
+
         if (t === "perfecto") {
-            const part = v.endsWith("ar")
-                ? v.slice(0, -2) + "ado"
-                : v.slice(0, -2) + "ido";
+            const part = base.endsWith("ar")
+                ? base.slice(0, -2) + "ado"
+                : base.slice(0, -2) + "ido";
             return haber[p] + " " + part;
         }
 
         if (t === "gerundio") {
-            const g = v.endsWith("ar")
-                ? v.slice(0, -2) + "ando"
-                : v.slice(0, -2) + "iendo";
+            const g = base.endsWith("ar")
+                ? base.slice(0, -2) + "ando"
+                : base.slice(0, -2) + "iendo";
             return estar[p] + " " + g;
         }
 
         if (t === "futuro") {
             const endings = ["é","ás","á","emos","éis","án"];
-            const stem = futureStems[v] || v;
+            const stem = base;
             return stem + endings[p];
         }
 
-        let stem = v.slice(0, -2), end = v.slice(-2);
+        let stem = base.slice(0, -2);
+        let end = normalizeAccents(base).slice(-2);  // "oír" → "oir" → "ir" ✅
 
         const endings = {
-            present: {
-                ar: ["o", "as", "a", "amos", "áis", "an"],
-                er: ["o", "es", "e", "emos", "éis", "en"],
-                ir: ["o", "es", "e", "imos", "ís", "en"]
-            },
+            present:    {
+                ar: ["o","as","a","amos","áis","an"],
+                er: ["o","es","e","emos","éis","en"],
+                ir: ["o","es","e","imos","ís","en"]   },
             indefinido: {
-                ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
-                er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
-                ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
-            },
+                ar: ["é","aste","ó","amos","asteis","aron"],
+                er: ["í","iste","ió","imos","isteis","ieron"],
+                ir: ["í","iste","ió","imos","isteis","ieron"] },
             imperfecto: {
-                ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
-                er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
-                ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
-            }
+                ar: ["aba","abas","aba","ábamos","abais","aban"],
+                er: ["ía","ías","ía","íamos","íais","ían"],
+                ir: ["ía","ías","ía","íamos","íais","ían"] }
         };
 
         return stem + endings[t][end][p];
@@ -738,7 +850,11 @@
     }
 
 
-    let srs = JSON.parse(localStorage.getItem("srs") || "{}"), current = {}, totalQuestions = 0, correctAnswers = 0;
+    let srs = JSON.parse(localStorage.getItem("srs") || "{}"),
+        current = {},
+        totalQuestions = 0,
+        correctAnswers = 0,
+        answered = false;
 
     function getKey(v, t, p) {
         return v + "|" + t + "|" + p;
@@ -825,26 +941,46 @@
 
             // subject rows
             subjects.forEach(s => {
-                html += `<tr><td style="padding:2px 6px; font-weight:bold; white-space: nowrap;">${s.p}</td>`;
-                Object.keys(tenseLabels).forEach(t => {
-                    let es = conjugate(current.v, t, s.i);
+                try {
+                    html += `<tr><td style="padding:2px 6px; font-weight:bold; white-space: nowrap;">${s.p}</td>`;
+                    Object.keys(tenseLabels).forEach(t => {
+                        let es = conjugate(current.v, t, s.i);
 
-                    if (t === "perfecto") {
-                        const verbObj = verbs.find(v => v.name === current.v);
+                        // Split auxiliary + main verb for alignment
+                        if (t === "perfecto" || t === "gerundio") {
+                            const parts = es.split(" ");
 
-                        if (verbObj?.participle) {
-                            const parts = es.split(" "); // ["he", "comido"]
-                            es = `${parts[0]} <span style="color:orange">${parts[1]}</span>`;
+                            if (parts.length === 2) {
+                                const aux = parts[0];
+                                let main = parts[1];
+
+                                // highlight irregular main part
+                                const verbObj = verbs.find(v => v.name === current.v);
+                                if (
+                                    (t === "perfecto" && verbObj?.participle) ||
+                                    (t === "gerundio" && verbObj?.gerund)
+                                ) {
+                                    main = `<span style="color:orange">${main}</span>`;
+                                }
+
+                                es = `
+                                    <span style="display:inline-block; width:70px;">${aux}</span>
+                                    <span>${main}</span>
+                                `;
+                            }
+                        } else {
+                            const irregular = isIrregularForm(current.v, t, s.i);
+                            if (irregular) {
+                                es = `<span style="color:orange">${es}</span>`;
+                            }
                         }
-                    } else {
-                        const irregular = isIrregularForm(current.v, t, s.i);
-                        if (irregular) {
-                            es = `<span style="color:orange">${es}</span>`;
-                        }
-                    }
-                    html += `<td style="padding:2px 6px; white-space: nowrap;">${es}</td>`;
-                });
-                html += `</tr>`;
+                        html += `<td style="padding:2px 6px; white-space: nowrap;">${es}</td>`;
+                    });
+                    html += `</tr>`;
+                }
+                catch(e) {
+                    console.error(`Failed for ${current.v} / ${s.p}:`, e);
+                }
             });
 
             html += `</table>`;
@@ -884,7 +1020,8 @@
     answerInput.addEventListener("keydown", function(e) {
         if (e.key === "Enter") {
             if (!answered) {
-                check();
+                const result = check();
+                if (result) answered = true;
             } else {
                 nextQ();
             }
