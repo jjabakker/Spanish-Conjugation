@@ -206,12 +206,13 @@
 
     // Map tense keys to display labels
     const tenseLabels = {
-        present:    "Presente",
-        perfecto:   "Pretérito Perfecto",
-        indefinido: "Pretérito Indefinido",
-        imperfecto: "Pretérito Imperfecto",
-        gerundio:   "Gerundio",
-        futuro:     "Futuro"
+        present:     "Presente",
+        perfecto:    "Pretérito Perfecto",
+        indefinido:  "Pretérito Indefinido",
+        imperfecto:  "Pretérito Imperfecto",
+        gerundio:    "Gerundio",
+        futuro:      "Futuro",
+        condicional: "Condicional"
     };
 
 
@@ -257,12 +258,24 @@
 
     // Sentence templates for each tense
     const sentenceTemplates = {
-        present:    ["Hoy ___", "Siempre ___"],
-        perfecto:   ["Hoy ___", "Esta semana ___"],
-        indefinido: ["Ayer ___", "Anoche ___"],
-        imperfecto: ["Antes ___", "Cuando era joven ___"],
-        gerundio:   ["Ahora ___", "En este momento ___"],
-        futuro:     ["Mañana ___", "En el futuro ___"]
+        present:     ["Hoy ___", "Siempre ___"],
+        perfecto:    ["Hoy ___", "Esta semana ___"],
+        indefinido:  ["Ayer ___", "Anoche ___"],
+        imperfecto:  ["Antes ___", "Cuando era joven ___"],
+        gerundio:    ["Ahora ___", "En este momento ___"],
+        futuro:      ["Mañana ___", "En el futuro ___"],
+        condicional: ["Yo ___ si pudiera", "En esa situación ___"]
+    };
+
+    // short headers
+    const shortLabels = {
+        present:     "Presente",
+        perfecto:    "Perfecto",
+        indefinido:  "Indefinido",
+        imperfecto:  "Imperfect",
+        gerundio:    "Gerundio",
+        futuro:      "Futuro",
+        condicional: "Condicional"
     };
 
     const irregulars = {
@@ -712,6 +725,11 @@
             const stem = verbObj?.futureStem || baseVerb;
             result = stem + endings[p];
         }
+        else if (t === "condicional") {
+            const endings = ["ía","ías","ía","íamos","íais","ían"];
+            const stem = verbObj?.futureStem || baseVerb;
+            result = stem + endings[p];
+        }
         else {
             // --- NORMAL TENSES ONLY ---
             const irregularKey = v;
@@ -799,6 +817,11 @@
             const endings = ["é","ás","á","emos","éis","án"];
             const stem = base;
             return stem + endings[p];
+        }
+
+        if (t === "condicional") {
+            const endings = ["ía","ías","ía","íamos","íais","ían"];
+            return base + endings[p];
         }
 
         let stem = base.slice(0, -2);
@@ -921,16 +944,6 @@
 
         if (el.style.display === "none") {
             let html = `<table style="border-collapse: collapse; width: 100%; font-family: monospace;">`;
-
-            // short headers
-            const shortLabels = {
-                present:    "Presente",
-                perfecto:   "Perfecto",
-                indefinido: "Indefinido",
-                imperfecto: "Imperfect",
-                gerundio:   "Gerundio",
-                futuro:     "Futuro"
-            };
 
             // header row
             html += `<tr><th style="padding:2px 6px;"></th>`;
