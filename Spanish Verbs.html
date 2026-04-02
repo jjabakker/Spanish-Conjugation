@@ -264,7 +264,7 @@
         imperfecto:  ["Antes ___", "Cuando era joven ___"],
         gerundio:    ["Ahora ___", "En este momento ___"],
         futuro:      ["Mañana ___", "En el futuro ___"],
-        condicional: ["Yo ___ si pudiera", "En esa situación ___"]
+        condicional: ["Yo ___ si pudiera", "En esa situación yo ___"]
     };
 
     // short headers
@@ -591,7 +591,11 @@
         }
         current = item;
         const template = sentenceTemplates[item.t][Math.floor(Math.random() * sentenceTemplates[item.t].length)];
-        document.getElementById("question").innerHTML = template.replace("___", item.s.p + " ... (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>");
+        const subjectPart = item.t === "condicional" ? "" : item.s.p + " ";
+
+        document.getElementById("question").innerHTML =
+            template.replace("___", subjectPart + "... (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>");
+
         document.getElementById("answer").value = "";
         document.getElementById("feedback").innerText = "";
         updatePracticeButton();
@@ -897,7 +901,9 @@
         while (tries < 20) {  // try up to 20 times to avoid infinite loops
             const v = verbs[Math.floor(Math.random() * verbs.length)];
             const t = tenses[Math.floor(Math.random() * tenses.length)];
-            const s = subjects[Math.floor(Math.random() * subjects.length)];
+            const s = t === "condicional"
+                ? subjects[0]   // always "yo"
+                : subjects[Math.floor(Math.random() * subjects.length)];
             const key = getKey(v, t, s.i);
             if (!recentKeys.includes(key)) {
                 recentKeys.push(key);
@@ -912,7 +918,9 @@
         // fallback if all recent keys were selected
         const v = verbs[Math.floor(Math.random() * verbs.length)];
         const t = tenses[Math.floor(Math.random() * tenses.length)];
-        const s = subjects[Math.floor(Math.random() * subjects.length)];
+        const s = t === "condicional"
+            ? subjects[0]   // always "yo"
+            : subjects[Math.floor(Math.random() * subjects.length)];
         const card = getCard(v, t, s.i);
         return {v, t, s, card};
     }
