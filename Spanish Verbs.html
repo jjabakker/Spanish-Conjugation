@@ -796,8 +796,6 @@
 
     function conjugateRegular(v, t, p) {
         const base = v.endsWith("se") ? v.slice(0, -2) : v;
-        // Normalize accented ending for stem/ending detection
-        const baseNorm = normalizeAccents(base);
 
         if (t === "perfecto") {
             const part = base.endsWith("ar")
@@ -815,8 +813,7 @@
 
         if (t === "futuro") {
             const endings = ["é","ás","á","emos","éis","án"];
-            const stem = base;
-            return stem + endings[p];
+            return base + endings[p];
         }
 
         if (t === "condicional") {
@@ -865,7 +862,7 @@
             return true;
         if (tense === "gerundio" && verb.gerund)
             return true;
-        if (tense === "futuro" && verb.futureStem) {
+        if ((tense === "futuro" || tense === "condicional") && verb.futureStem) {
             return true;
         }
 
