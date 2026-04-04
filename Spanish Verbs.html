@@ -2,114 +2,199 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Spanish Verb Trainer</title>
+    <title>Spanish Verb Trainer (Full System)</title>
+
     <style>
-        /* Basic page styling */
         body {
             font-family: Arial, serif;
-            max-width: 800px;
+            max-width: 1000px;
             margin: auto;
-            padding: 30px;
-            font-size: 22px;
-            line-height: 1.5;
+            padding: 20px;
+            font-size: 20px;
         }
-
-        h2 { font-size: 26px; }
-        h3 { font-size: 30px; font-weight: bold; margin: 25px 0; }
-
-        /* Inputs and buttons styling */
-        input, button {
-            padding: 14px;
+        button, input, select {
+            padding: 10px;
             width: 100%;
-            margin: 10px 0;
-            font-size: 22px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+            margin: 6px 0;
+            font-size: 18px;
+        }
+        .good { color: green; }
+        .bad { color: red; }
+        .meta { color: gray; font-size: 14px; }
+
+        .hidden {
+            display: none;
         }
 
-        button { cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #f2f2f2; }
+        #radioContainer {
+            display: flex;
+            gap: 30px;
+        }
 
-        /* Feedback text styling */
-        .good { color: green; font-size: 26px; }
-        .bad { color: red; font-size: 26px; }
+        .radioList label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+            cursor: pointer;
+        }
 
-        .meta, #counter { font-size: 18px; color: gray; }
-        .tense { font-size: 16px; color: gray; margin-left: 10px; }
+        .radioList input[type="radio"] {
+            width: auto;
+        }
 
-        /* Verb selector layout */
-        #verbSelector { column-count: 2; column-gap: 20px; }
-        #verbSelector label { display: block; margin-bottom: 5px; }
-
-        /* Tense selector layout (grid of checkboxes) */
-        #tenseSelector {
+        .radioList {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px 20px;
-            margin-top: 10px;
+            gap: 6px 20px;
         }
 
-        /* Button group inside selectors */
-        .selector-buttons {
+        .radioGroup {
+            flex: 1;
+        }
+        .radioList label {
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: background 0.15s ease;
+        }
+
+        .radioList label:hover {
+            background: #f2f2f2;
+        }
+
+        .radioList input[type="radio"]:checked + span {
+            font-weight: bold;
+        }
+
+        #verbSelectorContainer label,
+        #tenseSelectorContainer label {
+            display:     flex;
+            align-items: center;
+            gap:         8px;
+            margin:      3px 0;
+            cursor:      pointer;
+        }
+
+        #verbSelectorContainer input,
+        #tenseSelectorContainer input {
+            width: auto;
+        }
+
+        #verbSelectorContainer {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap:     40px;
         }
-        .selector-buttons button { padding: 6px; font-size: 16px; width: auto; }
 
-        /* Label + checkbox styling */
-        label { display: flex; align-items: center; }
-        label input[type="checkbox"] { margin-right: 8px; width: auto; }
+        #verbSelectorContainer > div {
+            flex: 1;
+        }
+
+        #fullConjugation {
+            font-size: 12px; /* overall smaller */
+        }
+
+        #fullConjugation table {
+            width: 100%;
+            table-layout: fixed; /* forces columns to fit */
+        }
+
+        #fullConjugation td {
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        /* only apply alignment when aux exists */
+        .withAux .aux {
+            display:    inline-block;
+            width:      50px;
+            text-align: left;
+            color:      #666;
+        }
+
+        .withAux .main {
+            margin-left: 6px;
+        }
+
+        /* no aux → no spacing hack */
+        .noAux {
+            padding-left: 0;
+        }
+
+        /* highlight irregular forms */
+        .irregular .main {
+            color: #a93226;
+        }}
+
+        #tenseRadios span,
+        #personRadios span {
+            font-size: 14px;
+        }
+
+        #tenseRadios label,
+        #personRadios label {
+            font-size: 14px;
+        }
+
     </style>
 </head>
+
 <body>
 
 <h2>Spanish Verb Trainer</h2>
 
-<!-- Verb selector toggle button -->
-<button onclick="toggleVerbSelector()">Select verbs</button>
-<div id="verbSelectorContainer" style="display:none; margin-bottom:15px;">
-    <div class="selector-buttons">
-        <button onclick="selectAll('verbSelector','selectedVerbs')">Select All</button>
-        <button onclick="selectNone('verbSelector','selectedVerbs')">Select None</button>
-        <button onclick="selectRegularVerbs()">Regular</button>
-        <button onclick="selectIrregularVerbs()">Irregular</button>
-        <button onclick="selectPracticeVerbs()">Practice</button>
+<button onclick="switchMode()">Switch Mode</button>
+<p id="modeLabel">Mode: production</p>
+
+<div id="selectionUI">
+
+    <button onclick="toggleVerbSelector()">Select verbs</button>
+
+    <div id="verbControls" style="display:none;">
+        <button onclick="selectAllVerbs()">All</button>
+        <button onclick="selectNoneVerbs()">None</button>
+        <button onclick="selectRegular()">Regular</button>
+        <button onclick="selectIrregular()">Irregular</button>
     </div>
-    <div id="verbSelector"></div> <!-- dynamically populated checkboxes -->
+
+    <div id="verbSelectorContainer" style="display:none;"></div>
+
+    <button onclick="toggleTenseSelector()">Select tenses</button>
+    <div id="tenseSelectorContainer" style="display:none;"></div>
+
 </div>
 
-<!-- Tense selector toggle button -->
-<button onclick="toggleTenseSelector()">Select tenses</button>
-<div id="tenseSelectorContainer" style="display:none; margin-bottom:15px;">
-    <div class="selector-buttons">
-        <button onclick="selectAll('tenseSelector','selectedTenses')">Select All</button>
-        <button onclick="selectNone('tenseSelector','selectedTenses')">Select None</button>
-    </div>
-    <div id="tenseSelector"></div> <!-- dynamically populated checkboxes -->
-</div>
-
-<!-- Controls for quiz -->
 <button onclick="nextQ()">Next Question</button>
 
-
 <h3 id="question"></h3>
-<input id="answer" placeholder="Type answer">
+
+<input id="answer" placeholder="Type answer (production mode)">
+
+<div id="recognitionUI">
+
+    <select id="verbGuess"></select>
+
+    <div id="radioContainer">
+        <div class="radioGroup">
+            <h4>Tense</h4>
+            <div id="tenseRadios" class="radioList"></div>
+        </div>
+
+        <div class="radioGroup">
+            <h4>Person</h4>
+            <div id="personRadios" class="radioList"></div>
+        </div>
+    </div>
+
+</div>
 <button onclick="check()">Check</button>
 
-<button id="practiceToggleBtn" onclick="togglePractice()">Mark for Practice</button>
 
-<button id="toggleConjugationBtn" onclick="toggleFullConjugation()">Show full conjugation</button>
 
-<p id="fullConjugation" class="meta" style="display:none;"></p>
 <p id="feedback"></p>
-<p class="meta" id="counter">Questions: 0 | Correct: 0</p>
 
-<!-- Optional select dropdown for direct verb selection -->
-<!--<select id="verbSelect">-->
-<!--    <option value="">&#45;&#45; Select a verb &#45;&#45;</option>-->
-<!--</select>-->
+<div id="fullConjugation" style="margin-top:20px;"></div>
 
+<p id="counter">Questions: 0 | Correct: 0</p>
 
 <script>
 
@@ -441,117 +526,132 @@
         }
     };
 
+    // ================= MODES =================
 
-    // ---------- Conjugation helper functions ----------
+    const Modes = {
+        PRODUCTION: "production",
+        RECOGNITION: "recognition"
+    };
 
-    // Returns participle of verb (irregular if defined)
-    function participle(verb) {
-        const base = verb.endsWith("se") ? verb.slice(0, -2) : verb;
+    let currentMode = Modes.PRODUCTION;
 
-        const verbObj = verbs.find(v => v.name === verb);
+    function updateUIForMode() {
 
-        if (verbObj?.participle) {
-            return verbObj.participle;
+        const recognitionUI = document.getElementById("recognitionUI");
+        const answerInput = document.getElementById("answer");
+
+        if (currentMode === Modes.PRODUCTION) {
+            recognitionUI.classList.add("hidden");
+            answerInput.classList.remove("hidden");
+        } else {
+            recognitionUI.classList.remove("hidden");
+            answerInput.classList.add("hidden");
         }
-
-        if (base.endsWith("ar")) return base.slice(0, -2) + "ado";
-        if (base.endsWith("er") || base.endsWith("ir")) return base.slice(0, -2) + "ido";
-
-        return base;
     }
 
-    // participle("acostarse");
+    // ================= SRS =================
 
-    // Returns gerund of verb (irregular if defined)
-    function gerund(v) {
-        const base = v.endsWith("se") ? v.slice(0, -2) : v;
-        const verbObj = verbs.find(verb => verb.name === v);
-        if (verbObj?.gerund) return verbObj.gerund;
-        return base.endsWith("ar") ? base.slice(0, -2) + "ando" : base.slice(0, -2) + "iendo";
+    let srs = JSON.parse(localStorage.getItem("srs") || "{}");
+
+    function getKey(v,t,p) {
+        return v+"|"+t+"|"+p;
     }
 
-    // Normalize accents for loose comparison
-    function normalizeAccents(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ñ/g, "n");
+    function getCard(v,t,p) {
+        const k = getKey(v,t,p);
+        if (!srs[k]) srs[k] = {ease:2.5, interval:1};
+        return srs[k];
     }
 
-    // Render checkboxes dynamically
-    function renderCheckboxes(containerId, items, storageKey) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-        let saved = JSON.parse(localStorage.getItem(storageKey) || "null");
-        items.forEach(i => {
-            const value = i.v || i;
-            const checked = saved === null ? true : saved.includes(value);
-            const label = document.createElement("label");
-            const cb = document.createElement("input");
-            cb.type = "checkbox";
-            cb.value = value;
-            cb.checked = checked;
-            cb.addEventListener("change", () => getSelected(containerId, storageKey));
-            label.appendChild(cb);
-            label.appendChild(document.createTextNode(" " + (i.l !== undefined ? i.l : i.v)));
-            container.appendChild(label);
-        });
+    function updateSRS(card, correct) {
+        if (correct) {
+            card.interval = Math.round(card.interval * card.ease);
+            card.ease += 0.1;
+        } else {
+            card.interval = 1;
+            card.ease = Math.max(1.3, card.ease - 0.2);
+        }
+        localStorage.setItem("srs", JSON.stringify(srs));
     }
 
-    // Save selected checkboxes to localStorage and return arrays
-    function getSelected(containerId, storageKey) {
-        const cbs = document.querySelectorAll(`#${containerId} input[type=checkbox]`);
-        const selected = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
-        localStorage.setItem(storageKey, JSON.stringify(selected));
-        return selected;
+    // ================= MODE HANDLERS =================
+
+    const ModeHandlers = {
+
+        production: {
+            generate(item) {
+                return {
+                    question: `${subjects[item.s.i].p} ... (${item.v}) [${tenseLabels[item.t]}]`
+                };
+            },
+            render(q) {
+                document.getElementById("question").innerHTML = q.question;
+            },
+            check(input, item) {
+                const correct = conjugate(item.v, item.t, item.s.i);
+                return {
+                    correct: normalize(input) === normalize(correct),
+                    correctAnswer: correct
+                };
+            }
+        },
+
+        recognition: {
+            generate(item) {
+                const form = conjugate(item.v, item.t, item.s.i);
+                return {
+                    question: `<b>${form}</b><br><span class="meta">Identify verb, tense, person</span>`
+                };
+            },
+            render(q) {
+                document.getElementById("question").innerHTML = q.question;
+            },
+            check(_, item) {
+                const verb = document.getElementById("verbGuess").value;
+                const tense = getSelectedRadio("tenseRadio");
+                const person = getSelectedRadio("personRadio");
+
+                const ok =
+                    verb === item.v &&
+                    tense === item.t &&
+                    String(person) === String(item.s.i);
+
+                return {
+                    correct: ok,
+                    correctAnswer:
+                        `${item.v} — ${tenseLabels[item.t]} — ${subjects[item.s.i].p}`
+                };
+            }
+        }
+    };
+
+    function selectAllVerbs() {
+        setVerbSelection(verbs.map(v => v.name));
     }
 
-    // ---------- Verb/Tense selector toggles ----------
-
-    function toggleVerbSelector() {
-        const c = document.getElementById("verbSelectorContainer");
-        c.style.display = c.style.display === "none" ? "block" : "none";
-        renderCheckboxes("verbSelector", verbs.map(v => ({ v: v.name, l: v.name })), "selectedVerbs");
+    function selectNoneVerbs() {
+        setVerbSelection([]);
     }
 
-    function toggleTenseSelector() {
-        const c = document.getElementById("tenseSelectorContainer");
-        c.style.display = c.style.display === "none" ? "block" : "none";
-        const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({ v: key, l: tenseLabels[key] }));
-        renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
+    function selectRegular() {
+        const regular = verbs
+            .filter(v => v.pattern === "none")
+            .map(v => v.name);
+
+        setVerbSelection(regular);
     }
 
+    function selectIrregular() {
+        const irregular = verbs
+            .filter(v => v.pattern !== "none")
+            .map(v => v.name);
 
-    // ---------- Select helpers ----------
-
-    function selectAll(containerId, storageKey) {
-        document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = true);
-        getSelected(containerId, storageKey);
+        setVerbSelection(irregular);
     }
 
-    function selectNone(containerId, storageKey) {
-        document.querySelectorAll(`#${containerId} input`).forEach(cb => cb.checked = false);
-        getSelected(containerId, storageKey);
-    }
-
-    function selectRegularVerbs() {
-        const cbs = document.querySelectorAll("#verbSelector input");
-        cbs.forEach(cb => {
-            const verb = verbs.find(v => v.name === cb.value);
-            cb.checked = verb && !isVerbIrregular(verb);  // use the new function
-        });
-        getSelected("verbSelector", "selectedVerbs");
-    }
-
-    function selectIrregularVerbs() {
-        const cbs = document.querySelectorAll("#verbSelector input");
-        cbs.forEach(cb => {
-            const verb = verbs.find(v => v.name === cb.value);
-            cb.checked = verb && isVerbIrregular(verb);  // use the new function
-        });
-        getSelected("verbSelector", "selectedVerbs");
-    }
-
-    function isVerbIrregular(verb) {
-        // A verb is irregular if it has a participle, gerund, or appears in the irregulars table
-        return !!(verb.participle || verb.gerund || irregulars[verb.name]);
+    function setVerbSelection(list) {
+        localStorage.setItem("selectedVerbs", JSON.stringify(list));
+        renderVerbSelector(); // refresh UI immediately
     }
 
     function getPracticeList() {
@@ -566,523 +666,457 @@
         return getPracticeList().includes(verb);
     }
 
-    // ---------- Quiz logic ----------
+    let current = {};
+    let totalQuestions = 0;
+    let correctAnswers = 0;
 
     function nextQ() {
+
+        document.getElementById("fullConjugation").innerHTML = "";
         answered = false;
         totalQuestions++;
-
-        document.getElementById("fullConjugation").style.display = "none";
-        document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
-
 
         const selectedVerbs = getSelectedVerbs();
         const selectedTenses = getSelectedTenses();
 
         if (selectedVerbs.length === 0 || selectedTenses.length === 0) {
-            document.getElementById("question").innerText = "Select at least one verb and one tense";
+            document.getElementById("question").innerText =
+                "Select at least one verb and one tense";
             return;
         }
-        const item = pickCard(selectedVerbs, selectedTenses);
 
-        if (!item) {
-            document.getElementById("question").innerText = "🎉 Nothing due!";
-            return;
-        }
-        current = item;
-        const template = sentenceTemplates[item.t][Math.floor(Math.random() * sentenceTemplates[item.t].length)];
-        const subjectPart = item.t === "condicional" ? "" : item.s.p + " ";
+        const v = selectedVerbs[Math.floor(Math.random()*selectedVerbs.length)];
+        const t = selectedTenses[Math.floor(Math.random()*selectedTenses.length)];
+        const s = subjects[Math.floor(Math.random()*subjects.length)];
 
-        document.getElementById("question").innerHTML =
-            template.replace("___", subjectPart + "... (" + item.v + ") <span class='tense'>[" + tenseLabels[item.t] + "]</span>");
+        const card = getCard(v, t, s.i);
+
+        current = {v, t, s, card};
+
+        const handler = ModeHandlers[currentMode];
+        const q = handler.generate(current);
+        handler.render(q);
 
         document.getElementById("answer").value = "";
         document.getElementById("feedback").innerText = "";
-        updatePracticeButton();
-        setTimeout(() => document.getElementById("answer").focus(), 0);
+
+        if (currentMode === Modes.PRODUCTION) {
+            document.getElementById("answer").focus();
+        }
     }
 
     function check() {
 
-        if (!current.v) {
-            document.getElementById("feedback").innerHTML =
-                "<span class='bad'>Click 'Next Question' first</span>";
-            return "wrong";
-        }
+        if (!current.v || !current.t) return;  // 👈 ADD THIS GUARD
 
-        const input = document.getElementById("answer").value.trim();
-        if (!input) {
-            document.getElementById("feedback").innerHTML =
-                "<span class='bad'>Please enter an answer</span>";
-            return "wrong";
-        }
+        const handler = ModeHandlers[currentMode];
+        const result = handler.check(
+            document.getElementById("answer").value,
+            current
+        );
 
-        answered = true;
+        updateSRS(current.card, result.correct);
 
-        let user = input.toLowerCase().trim().replace(/\s+/g, " ");
-
-        let correct = conjugate(current.v, current.t, current.s.i);
-        let correctClean = correct.toLowerCase().trim().replace(/\s+/g, " ");
-
-        // normalize
-        let userNorm = normalizeAccents(user);
-        let correctNorm = normalizeAccents(correctClean);
-
-        // detect reflexive
-        const verbObj = verbs.find(v => v.name === current.v);
-        const isReflexive = verbObj?.reflexive;
-
-        // remove pronoun from correct form
-        let correctWithoutPronoun = correctClean.replace(/^(me|te|se|nos|os)\s+/, "");
-        let withoutNorm = normalizeAccents(correctWithoutPronoun);
-
-        let expectedPronoun = reflexivePronouns[current.s.i];
-
-        // strict correct
-        let okStrict = user === correctClean;
-
-        // missing pronoun ONLY if verb form is otherwise perfect
-        let missingPronoun =
-            isReflexive &&
-            userNorm === withoutNorm &&
-            !user.startsWith(expectedPronoun + " ");
-
-        // accent issue ONLY if full structure is correct
-        let accentIssue =
-            user !== correctClean &&
-            userNorm === correctNorm &&
-            user.split(" ").length === correctClean.split(" ").length;
-        // irregular highlighting
-        let irregular = isIrregularForm(current.v, current.t, current.s.i);
-        let colored = irregular
-            ? `<span style="color:orange"><b>${correct}</b></span>`
-            : `<b>${correct}</b>`;
-
-        const dutch = verbs.find(v => v.name === current.v)?.dutch || "(geen vertaling)";
-
-        if (okStrict) {
-            document.getElementById("feedback").innerHTML =
-                `<span class='good'>Correct</span><br><i>Dutch: ${dutch}</i>`;
-        }
-        else if (accentIssue) {
-            document.getElementById("feedback").innerHTML =
-                `<span class='good'>Almost correct — check accent: ${colored}</span><br><i>Dutch: ${dutch}</i>`;
-        }
-        else if (missingPronoun) {
-            document.getElementById("feedback").innerHTML =
-                `<span class='good'>Almost correct — missing pronoun: ${colored}</span><br><i>Dutch: ${dutch}</i>`;
-        }
-        else {
-            document.getElementById("feedback").innerHTML =
-                `<span class='bad'>Wrong → ${colored}</span><br><i>Dutch: ${dutch}</i>`;
-        }
-
-        let success = okStrict || missingPronoun || accentIssue;
-
-        updateSRS(current.card, success);
-
-        if (success)
+        if (result.correct) {
             correctAnswers++;
+            document.getElementById("feedback").innerHTML =
+                "<span class='good'>Correct</span>";
+        } else {
+            document.getElementById("feedback").innerHTML =
+                `<span class='bad'>Wrong → ${result.correctAnswer}</span>`;
+        }
+
+        renderFullConjugation(current.v);
         updateCounter();
 
-        if (okStrict)
-            return "correct";
-        if (missingPronoun || accentIssue)
-            return "almost";
-        return "wrong";
+        return result.correct;
     }
 
-    function getSelectedVerbs() {
-        return getSelected("verbSelector", "selectedVerbs");
+    function updateCounter() {
+        document.getElementById("counter").innerText =
+            `Questions: ${totalQuestions} | Correct: ${correctAnswers}`;
     }
 
-    function getSelectedTenses() {
-        return getSelected("tenseSelector", "selectedTenses");
+    // ================= MODE SWITCH =================
+
+    function switchMode() {
+        currentMode =
+            currentMode === Modes.PRODUCTION
+                ? Modes.RECOGNITION
+                : Modes.PRODUCTION;
+
+        document.getElementById("modeLabel").innerText =
+            "Mode: " + currentMode;
+
+        updateUIForMode();
     }
 
-    // ---------- Conjugate ----------
+    // ================= CONJUGATION =================
 
     function conjugate(v, t, p) {
-        const verbObj = verbs.find(verb => verb.name === v);
-        const isReflexive = verbObj?.reflexive;
 
-        let baseVerb = isReflexive ? v.slice(0, -2) : v;
+        const verbObj = verbs.find(x => x.name === v);
+        const isReflexive = verbObj?.reflexive;
+        const base = isReflexive ? v.slice(0,-2) : v;
+
         let result;
 
-        // --- SPECIAL TENSES FIRST ---
         if (t === "perfecto") {
             result = haber[p] + " " + participle(v);
-
-            if (isReflexive) {
-                return reflexivePronouns[p] + " " + result;
-            }
         }
         else if (t === "gerundio") {
             result = estar[p] + " " + gerund(v);
-
-            if (isReflexive) {
-                return reflexivePronouns[p] + " " + result;
-            }
         }
         else if (t === "futuro") {
             const endings = ["é","ás","á","emos","éis","án"];
-            const stem = verbObj?.futureStem || baseVerb;
+            const stem = verbObj?.futureStem || base;
             result = stem + endings[p];
         }
         else if (t === "condicional") {
             const endings = ["ía","ías","ía","íamos","íais","ían"];
-            const stem = verbObj?.futureStem || baseVerb;
+            const stem = verbObj?.futureStem || base;
             result = stem + endings[p];
         }
+        else if (irregulars[v] && irregulars[v][t]) {
+            result = irregulars[v][t][p];
+        }
         else {
-            // --- NORMAL TENSES ONLY ---
-            const irregularKey = v;
+            const stem = base.slice(0,-2);
+            const end = base.slice(-2);
 
-            // ALWAYS use full verb for irregular lookup
-            if (irregulars[v] && irregulars[v][t]) {
-                result = irregulars[v][t][p];
-            }
-            else {
-                let stem = baseVerb.slice(0, -2);
-                let end = normalizeAccents(baseVerb).slice(-2);  // handles oír, etc.
-
-                // 🔥 APPLY STEM CHANGE (present only, except nosotros/vosotros)
-                if (t === "present" && verbObj?.pattern === "stem" && p !== 3 && p !== 4) {
-                    if (stem.includes("o")) {
-                        stem = stem.replace(/o([^o]*)$/, "ue$1"); // o → ue (contar, dormir, jugar)
-                    } else if (stem.includes("e")) {
-                        if (end === "ir") {
-                            stem = stem.replace(/e([^e]*)$/, "i$1"); // e → i for -ir verbs (pedir, elegir)
-                        } else {
-                            stem = stem.replace(/e([^e]*)$/, "ie$1"); // e → ie for -er/-ar verbs (entender, pensar)
-                        }
-                    }
+            const endings = {
+                present: {
+                    ar: ["o","as","a","amos","áis","an"],
+                    er: ["o","es","e","emos","éis","en"],
+                    ir: ["o","es","e","imos","ís","en"]
+                },
+                indefinido: {
+                    ar: ["é","aste","ó","amos","asteis","aron"],
+                    er: ["í","iste","ió","imos","isteis","ieron"],
+                    ir: ["í","iste","ió","imos","isteis","ieron"]
+                },
+                imperfecto: {
+                    ar: ["aba","abas","aba","ábamos","abais","aban"],
+                    er: ["ía","ías","ía","íamos","íais","ían"],
+                    ir: ["ía","ías","ía","íamos","íais","ían"]
                 }
+            };
 
-                const endings = {
-                    present: {
-                        ar: ["o", "as", "a", "amos", "áis", "an"],
-                        er: ["o", "es", "e", "emos", "éis", "en"],
-                        ir: ["o", "es", "e", "imos", "ís", "en"]
-                    },
-                    indefinido: {
-                        ar: ["é", "aste", "ó", "amos", "asteis", "aron"],
-                        er: ["í", "iste", "ió", "imos", "isteis", "ieron"],
-                        ir: ["í", "iste", "ió", "imos", "isteis", "ieron"]
-                    },
-                    imperfecto: {
-                        ar: ["aba", "abas", "aba", "ábamos", "abais", "aban"],
-                        er: ["ía", "ías", "ía", "íamos", "íais", "ían"],
-                        ir: ["ía", "ías", "ía", "íamos", "íais", "ían"]
-                    }
-                };
-
-                result = stem + endings[t][end][p];
-            }
+            result = stem + endings[t][end][p];
         }
 
-        // --- REFLEXIVE HANDLING LAST ---
         if (isReflexive) {
-            // normalize spacing just in case
-            result = result.trim();
-
-            // if already starts with reflexive pronoun → DO NOTHING
-            const alreadyHasPronoun = reflexivePronouns.some(pr => result.startsWith(pr + " "));
-            if (alreadyHasPronoun) {
-                return result;
-            }
-
             return reflexivePronouns[p] + " " + result;
         }
 
         return result;
     }
 
-    function conjugateRegular(v, t, p) {
-        const base = v.endsWith("se") ? v.slice(0, -2) : v;
-
-        if (t === "perfecto") {
-            const part = base.endsWith("ar")
-                ? base.slice(0, -2) + "ado"
-                : base.slice(0, -2) + "ido";
-            return haber[p] + " " + part;
-        }
-
-        if (t === "gerundio") {
-            const g = base.endsWith("ar")
-                ? base.slice(0, -2) + "ando"
-                : base.slice(0, -2) + "iendo";
-            return estar[p] + " " + g;
-        }
-
-        if (t === "futuro") {
-            const endings = ["é","ás","á","emos","éis","án"];
-            return base + endings[p];
-        }
-
-        if (t === "condicional") {
-            const endings = ["ía","ías","ía","íamos","íais","ían"];
-            return base + endings[p];
-        }
-
-        let stem = base.slice(0, -2);
-        let end = normalizeAccents(base).slice(-2);  // "oír" → "oir" → "ir" ✅
-
-        const endings = {
-            present:    {
-                ar: ["o","as","a","amos","áis","an"],
-                er: ["o","es","e","emos","éis","en"],
-                ir: ["o","es","e","imos","ís","en"]   },
-            indefinido: {
-                ar: ["é","aste","ó","amos","asteis","aron"],
-                er: ["í","iste","ió","imos","isteis","ieron"],
-                ir: ["í","iste","ió","imos","isteis","ieron"] },
-            imperfecto: {
-                ar: ["aba","abas","aba","ábamos","abais","aban"],
-                er: ["ía","ías","ía","íamos","íais","ían"],
-                ir: ["ía","ías","ía","íamos","íais","ían"] }
-        };
-
-        return stem + endings[t][end][p];
+    function participle(v) {
+        const obj = verbs.find(x => x.name === v);
+        if (obj?.participle) return obj.participle;
+        return v.endsWith("ar") ? v.slice(0,-2)+"ado" : v.slice(0,-2)+"ido";
     }
 
-    function isIrregularForm(verbName, tense, person) {
-        const verb = verbs.find(v => v.name === verbName);
-        if (!verb)
-            return false;
+    function gerund(v) {
+        const obj = verbs.find(x => x.name === v);
+        if (obj?.gerund) return obj.gerund;
+        return v.endsWith("ar") ? v.slice(0,-2)+"ando" : v.slice(0,-2)+"iendo";
+    }
 
-        // Check specific form vs. regular
-        if (irregulars[verbName] && irregulars[verbName][tense]) {
-            const irregularForm = irregulars[verbName][tense][person];
-            const regularForm = conjugateRegular(verbName, tense, person);
+    function normalize(str) {
+        return str.toLowerCase().trim()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g,"");
+    }
 
-            if (irregularForm !== regularForm) {
-                return true;
-            }
-        }
+    // ================= UI =================
 
-        // Check participle / gerund
-        if (tense === "perfecto" && verb.participle)
-            return true;
-        if (tense === "gerundio" && verb.gerund)
-            return true;
-        if ((tense === "futuro" || tense === "condicional") && verb.futureStem) {
-            return true;
-        }
+    function renderVerbDropdown() {
 
-        return false;
+        const sel = document.getElementById("verbGuess");
+        sel.innerHTML = ""; // clear previous options
+
+        const selectedVerbs = getSelectedVerbs();
+
+        selectedVerbs.forEach(vName => {
+            const opt = document.createElement("option");
+            opt.value = vName;
+            opt.textContent = vName;
+            sel.appendChild(opt);
+        });
     }
 
 
-    let srs = JSON.parse(localStorage.getItem("srs") || "{}"),
-        current = {},
-        totalQuestions = 0,
-        correctAnswers = 0,
-        answered = false;
+    function renderRadios() {
 
-    function getKey(v, t, p) {
-        return v + "|" + t + "|" + p;
+        const tenseDiv = document.getElementById("tenseRadios");
+        tenseDiv.innerHTML = "";
+
+        Object.keys(tenseLabels).forEach(t => {
+            const label = document.createElement("label");
+
+            const rb = document.createElement("input");
+            rb.type = "radio";
+            rb.name = "tenseRadio";
+            rb.value = t;
+
+            const span = document.createElement("span");
+            span.textContent = tenseLabels[t];
+
+            label.appendChild(rb);
+            label.appendChild(span);
+
+            tenseDiv.appendChild(label);
+        });
+
+        const personDiv = document.getElementById("personRadios");
+        personDiv.innerHTML = "";
+
+        subjects.forEach(s => {
+            const label = document.createElement("label");
+
+            const rb = document.createElement("input");
+            rb.type = "radio";
+            rb.name = "personRadio";
+            rb.value = s.i;
+
+            const span = document.createElement("span");
+            span.textContent = s.p;
+
+            label.appendChild(rb);
+            label.appendChild(span);
+
+            personDiv.appendChild(label);
+        });
+
+        // 👇 Auto-select defaults
+        const firstTense = document.querySelector('input[name="tenseRadio"]');
+        const firstPerson = document.querySelector('input[name="personRadio"]');
+
+        if (firstTense) firstTense.checked = true;
+        if (firstPerson) firstPerson.checked = true;
     }
 
-    function getCard(v, t, p) {
-        let k = getKey(v, t, p);
-        if (!srs[k]) srs[k] =
-            {ease: 2.5, interval: 1, due: 0};
-        return srs[k];
-    }
+    let answered = false;
 
-    let recentKeys = [];   // add this at the top, next to `current`
+    document.addEventListener("keydown", function(e) {
 
-    function pickCard(verbs, tenses) {
-        if (verbs.length === 0 || tenses.length === 0)
-            return null;
+        // 👇 ONLY trigger when relevant
+        const isInputFocused = document.activeElement.id === "answer";
 
-        let tries = 0;
-        while (tries < 20) {  // try up to 20 times to avoid infinite loops
-            const v = verbs[Math.floor(Math.random() * verbs.length)];
-            const t = tenses[Math.floor(Math.random() * tenses.length)];
-            const s = t === "condicional"
-                ? subjects[0]   // always "yo"
-                : subjects[Math.floor(Math.random() * subjects.length)];
-            const key = getKey(v, t, s.i);
-            if (!recentKeys.includes(key)) {
-                recentKeys.push(key);
-                if (recentKeys.length > 5)
-                    recentKeys.shift();  // keep last 5
-                const card = getCard(v, t, s.i);
-                return {v, t, s, card};
-            }
-            tries++;
-        }
+        if (e.key === "Enter" && (isInputFocused || currentMode === Modes.RECOGNITION)) {
 
-        // fallback if all recent keys were selected
-        const v = verbs[Math.floor(Math.random() * verbs.length)];
-        const t = tenses[Math.floor(Math.random() * tenses.length)];
-        const s = t === "condicional"
-            ? subjects[0]   // always "yo"
-            : subjects[Math.floor(Math.random() * subjects.length)];
-        const card = getCard(v, t, s.i);
-        return {v, t, s, card};
-    }
+            e.preventDefault(); // 👈 prevents weird double triggers
 
-    function updateCounter() {
-        document.getElementById("counter").innerText = `Questions: ${totalQuestions} | Correct: ${correctAnswers}`;
-    }
-
-    function updateSRS(card, correct) {
-        if (correct) {
-            card.interval = Math.round(card.interval * card.ease);
-            card.ease += 0.1;
-        } else {
-            card.interval = 1;
-            card.ease = Math.max(1.3, card.ease - 0.2);
-        }
-        localStorage.setItem("srs", JSON.stringify(srs));
-    }
-
-
-    function toggleFullConjugation() {
-        if (!current || !current.v) {
-            return;
-        }
-        const el = document.getElementById("fullConjugation");
-
-        if (el.style.display === "none") {
-            let html = `<table style="border-collapse: collapse; width: 100%; font-family: monospace;">`;
-
-            // header row
-            html += `<tr><th style="padding:2px 6px;"></th>`;
-            Object.keys(tenseLabels).forEach(t => {
-                html += `<th style="padding:2px 6px; text-align:left; white-space: nowrap;">${shortLabels[t]}</th>`;
-            });
-            html += `</tr>`;
-
-            // subject rows
-            subjects.forEach(s => {
-                try {
-                    html += `<tr><td style="padding:2px 6px; font-weight:bold; white-space: nowrap;">${s.p}</td>`;
-                    Object.keys(tenseLabels).forEach(t => {
-                        let es = conjugate(current.v, t, s.i);
-
-                        // Split auxiliary + main verb for alignment
-                        if (t === "perfecto" || t === "gerundio") {
-                            const parts = es.split(" ");
-
-                            if (parts.length === 2) {
-                                const aux = parts[0];
-                                let main = parts[1];
-
-                                // highlight irregular main part
-                                const verbObj = verbs.find(v => v.name === current.v);
-                                if (
-                                    (t === "perfecto" && verbObj?.participle) ||
-                                    (t === "gerundio" && verbObj?.gerund)
-                                ) {
-                                    main = `<span style="color:orange">${main}</span>`;
-                                }
-
-                                es = `
-                                    <span style="display:inline-block; width:70px;">${aux}</span>
-                                    <span>${main}</span>
-                                `;
-                            }
-                        } else {
-                            const irregular = isIrregularForm(current.v, t, s.i);
-                            if (irregular) {
-                                es = `<span style="color:orange">${es}</span>`;
-                            }
-                        }
-                        html += `<td style="padding:2px 6px; white-space: nowrap;">${es}</td>`;
-                    });
-                    html += `</tr>`;
-                }
-                catch(e) {
-                    console.error(`Failed for ${current.v} / ${s.p}:`, e);
-                }
-            });
-
-            html += `</table>`;
-
-            el.innerHTML = html;
-            el.style.display = "block";
-            document.getElementById("toggleConjugationBtn").innerText = "Hide full conjugation";
-        } else {
-            el.style.display = "none";
-            document.getElementById("toggleConjugationBtn").innerText = "Show full conjugation";
-        }
-    }
-
-
-    // initial render
-    const savedVerbs = JSON.parse(localStorage.getItem("selectedVerbs") || "null");
-    if (!savedVerbs || savedVerbs.length === 0) {
-        const allVerbs = verbs.map(v => v.name);
-        localStorage.setItem("selectedVerbs", JSON.stringify(allVerbs));
-    }
-
-    if (!localStorage.getItem("selectedTenses")) {
-        const allTenses = Object.keys(tenseLabels);
-        localStorage.setItem("selectedTenses", JSON.stringify(allTenses));
-    }
-    renderCheckboxes(
-        "verbSelector",
-        verbs.map(v => ({ v: v.name, l: v.name })),
-        "selectedVerbs"
-    );
-    const tensesForCheckbox = Object.keys(tenseLabels).map(key => ({v: key, l: tenseLabels[key]}));
-    renderCheckboxes("tenseSelector", tensesForCheckbox, "selectedTenses");
-
-
-    // --- ENTER key triggers check only ---
-    const answerInput = document.getElementById("answer");
-    answerInput.addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
             if (!answered) {
                 const result = check();
-                if (result) answered = true;
+                if (result !== undefined) answered = true;
             } else {
                 nextQ();
+                answered = false;
             }
         }
     });
 
-    function togglePractice() {
-        if (!current || !current.v) return;
-
-        let list = getPracticeList();
-
-        if (list.includes(current.v)) {
-            list = list.filter(v => v !== current.v);
-        } else {
-            list.push(current.v);
-        }
-
-        savePracticeList(list);
-        updatePracticeButton();
+    function getSelectedRadio(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : null;
     }
 
-    function updatePracticeButton() {
-        const btn = document.getElementById("practiceToggleBtn");
-        if (!btn || !current || !current.v) return;
+    function toggleVerbSelector() {
+        const container = document.getElementById("verbSelectorContainer");
+        const controls = document.getElementById("verbControls");
 
-        if (isInPractice(current.v)) {
-            btn.innerText = "Remove from Practice";
+        if (container.style.display === "none") {
+            container.style.display = "flex";
+            controls.style.display = "flex";   // 👈 IMPORTANT
+            renderVerbSelector();
         } else {
-            btn.innerText = "Mark for Practice";
+            container.style.display = "none";
+            controls.style.display = "none";   // 👈 IMPORTANT
         }
     }
 
-    function selectPracticeVerbs() {
-        const practice = getPracticeList();
-        const cbs = document.querySelectorAll("#verbSelector input");
+    function toggleTenseSelector() {
+        const container = document.getElementById("tenseSelectorContainer");
 
-        cbs.forEach(cb => {
-            cb.checked = practice.includes(cb.value);
+        if (container.style.display === "none") {
+            container.style.display = "grid";
+            renderTenseSelector();
+        } else {
+            container.style.display = "none";
+        }
+    }
+
+    function renderVerbSelector() {
+        const container = document.getElementById("verbSelectorContainer");
+        container.innerHTML = "";
+
+        const selected = JSON.parse(localStorage.getItem("selectedVerbs") || "null");
+
+        const half = Math.ceil(verbs.length / 2);
+        const col1 = verbs.slice(0, half);
+        const col2 = verbs.slice(half);
+
+        function createColumn(list) {
+            const col = document.createElement("div");
+
+            list.forEach(v => {
+                const label = document.createElement("label");
+
+                const cb = document.createElement("input");
+                cb.type = "checkbox";
+                cb.value = v.name;
+                cb.checked = selected ? selected.includes(v.name) : true;
+
+                cb.addEventListener("change", saveVerbSelection);
+
+                label.appendChild(cb);
+                label.appendChild(document.createTextNode(" " + v.name));
+
+                col.appendChild(label);
+            });
+
+            return col;
+        }
+
+        container.appendChild(createColumn(col1));
+        container.appendChild(createColumn(col2));
+    }
+
+    function renderTenseSelector() {
+        const container = document.getElementById("tenseSelectorContainer");
+        container.innerHTML = "";
+
+        const selected = JSON.parse(localStorage.getItem("selectedTenses") || "null");
+
+        Object.keys(tenseLabels).forEach(t => {
+            const label = document.createElement("label");
+
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = t;
+            cb.checked = selected ? selected.includes(t) : true;
+
+            cb.addEventListener("change", saveTenseSelection);
+
+            label.appendChild(cb);
+            label.appendChild(document.createTextNode(" " + tenseLabels[t]));
+
+            container.appendChild(label);
+        });
+    }
+
+    function saveVerbSelection() {
+        const selected = Array.from(
+            document.querySelectorAll("#verbSelectorContainer input:checked")
+        ).map(cb => cb.value);
+
+        localStorage.setItem("selectedVerbs", JSON.stringify(selected));
+    }
+
+    function saveTenseSelection() {
+        const selected = Array.from(
+            document.querySelectorAll("#tenseSelectorContainer input:checked")
+        ).map(cb => cb.value);
+
+        localStorage.setItem("selectedTenses", JSON.stringify(selected));
+    }
+
+    function getSelectedVerbs() {
+        return JSON.parse(localStorage.getItem("selectedVerbs") || "[]");
+    }
+
+    function getSelectedTenses() {
+        return JSON.parse(localStorage.getItem("selectedTenses") || "[]");
+    }
+
+
+    function renderFullConjugation(verb) {
+
+        const tenses = Object.keys(tenseLabels);
+
+        let html = `<h4>${verb}</h4><table><tr><td></td>`;
+
+        tenses.forEach(t => {
+            html += `<td><b>${shortLabels[t]}</b></td>`;
         });
 
-        getSelected("verbSelector", "selectedVerbs");
+        html += "</tr>";
+
+        subjects.forEach(s => {
+
+            html += `<tr><td><b>${s.p}</b></td>`;
+
+            tenses.forEach(t => {
+
+                const form = conjugate(verb, t, s.i);
+                const parts = form.split(" ");
+                let isIrregular = false;
+
+                // 1. Standard irregular tables
+                if (
+                    irregulars[verb] &&
+                    irregulars[verb][t] &&
+                    irregulars[verb][t][s.i]
+                ) {
+                    isIrregular = true;
+                }
+
+                // 2. Irregular participles (perfecto)
+                if (t === "perfecto") {
+                    const obj = verbs.find(x => x.name === verb);
+                    if (obj?.participle) isIrregular = true;
+                }
+
+                // 3. Irregular gerunds (gerundio)
+                if (t === "gerundio") {
+                    const obj = verbs.find(x => x.name === verb);
+                    if (obj?.gerund) isIrregular = true;
+                }
+
+                const cls = isIrregular ? "irregular" : "";
+
+                if (parts.length === 2) {
+                    html += `
+                        <td class="withAux ${cls}">
+                            <span class="aux">${parts[0]}</span>
+                            <span class="main">${parts[1]}</span>
+                        </td>`;
+                } else {
+                    html += `
+                        <td class="noAux ${cls}">
+                            <span class="main">${form}</span>
+                        </td>`;
+                }
+
+            });
+
+            html += "</tr>";
+        });
+
+        html += "</table>";
+
+        document.getElementById("fullConjugation").innerHTML = html;
     }
 
+    // ================= INIT =================
+
+    // 👇 Initialize selections if not present
+    if (!localStorage.getItem("selectedVerbs")) {
+        localStorage.setItem("selectedVerbs", JSON.stringify(verbs.map(v => v.name)));
+    }
+
+    if (!localStorage.getItem("selectedTenses")) {
+        localStorage.setItem("selectedTenses", JSON.stringify(Object.keys(tenseLabels)));
+    }
+
+    renderVerbDropdown();
+    renderRadios();
+    updateUIForMode();
+
 </script>
+
 </body>
-</html>>
+</html>
