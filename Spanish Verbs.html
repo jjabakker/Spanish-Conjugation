@@ -45,8 +45,9 @@
 
         .radioList {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 20px;
+            grid-template-columns: auto auto;
+            gap: 4px 6px;
+            justify-content: start;
         }
 
         .radioGroup {
@@ -63,7 +64,7 @@
         }
 
         .radioList input[type="radio"]:checked + span {
-            font-weight: bold;
+            font-weight: normal;
         }
 
         #verbSelectorContainer label,
@@ -135,6 +136,31 @@
             font-size: 14px;
         }
 
+        #tenseControls button {
+            width:     auto;         /* don’t stretch full width */
+            padding:   6px 10px;      /* smaller padding */
+            font-size: 12px;         /* smaller text */
+            margin:    2px;          /* tighter spacing */
+        }
+
+        #tenseControls {
+            display:  flex;
+            gap:      8px;
+        }
+
+        #verbControls button {
+            width: auto;
+            padding: 6px 10px;
+            font-size: 14px;
+            margin: 3px;
+        }
+
+        #verbControls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap; /* optional: wraps nicely if screen is narrow */
+        }
+
     </style>
 </head>
 
@@ -159,6 +185,12 @@
     <div id="verbSelectorContainer" style="display:none;"></div>
 
     <button onclick="toggleTenseSelector()">Select tenses</button>
+
+    <div id="tenseControls" style="display:none;">
+        <button onclick="selectAllTenses()">All</button>
+        <button onclick="selectNoneTenses()">None</button>
+    </div>
+
     <div id="tenseSelectorContainer" style="display:none;"></div>
 
 </div>
@@ -588,9 +620,34 @@
                 document.getElementById("question").innerHTML = q.question;
             },
             check(input, item) {
+
                 const correct = conjugate(item.v, item.t, item.s.i);
+
+                const rawInput = input.trim().toLowerCase();
+                const rawCorrect = correct.toLowerCase();
+
+                const normalizedInput = normalize(input);
+                const normalizedCorrect = normalize(correct);
+
+                if (rawInput === rawCorrect) {
+                    return {
+                        correct: true,
+                        almost: false,
+                        correctAnswer: correct
+                    };
+                }
+
+                if (normalizedInput === normalizedCorrect) {
+                    return {
+                        correct: false,
+                        almost: true,
+                        correctAnswer: correct
+                    };
+                }
+
                 return {
-                    correct: normalize(input) === normalize(correct),
+                    correct: false,
+                    almost: false,
                     correctAnswer: correct
                 };
             }
@@ -607,19 +664,24 @@
                 document.getElementById("question").innerHTML = q.question;
             },
             check(_, item) {
+
                 const verb = document.getElementById("verbGuess").value;
                 const tense = getSelectedRadio("tenseRadio");
                 const person = getSelectedRadio("personRadio");
 
-                const ok =
-                    verb === item.v &&
-                    tense === item.t &&
-                    String(person) === String(item.s.i);
+                const form = conjugate(item.v, item.t, item.s.i);
+
+                const matches = getAllMatches(form);
+
+                const userCorrect = matches.some(m =>
+                    m.v === verb &&
+                    m.t === tense &&
+                    String(m.p) === String(person)
+                );
 
                 return {
-                    correct: ok,
-                    correctAnswer:
-                        `${item.v} — ${tenseLabels[item.t]} — ${subjects[item.s.i].p}`
+                    correct: userCorrect,
+                    matches: matches
                 };
             }
         }
@@ -651,11 +713,25 @@
 
     function setVerbSelection(list) {
         localStorage.setItem("selectedVerbs", JSON.stringify(list));
-        renderVerbSelector(); // refresh UI immediately
+        renderVerbSelector();
+        renderVerbDropdown();   // 👈 ADD THIS
     }
 
     function getPracticeList() {
         return JSON.parse(localStorage.getItem("practiceVerbs") || "[]");
+    }
+
+    function selectAllTenses() {
+        setTenseSelection(Object.keys(tenseLabels));
+    }
+
+    function selectNoneTenses() {
+        setTenseSelection([]);
+    }
+
+    function setTenseSelection(list) {
+        localStorage.setItem("selectedTenses", JSON.stringify(list));
+        renderTenseSelector(); // refresh UI
     }
 
     function savePracticeList(list) {
@@ -665,6 +741,34 @@
     function isInPractice(verb) {
         return getPracticeList().includes(verb);
     }
+
+    function getAllMatches(form) {
+        const matches = [];
+
+        const selectedVerbs = getSelectedVerbs();
+        const selectedTenses = getSelectedTenses();
+
+        selectedVerbs.forEach(v => {
+            selectedTenses.forEach(t => {
+                subjects.forEach(s => {
+
+                    const candidate = conjugate(v, t, s.i);
+
+                    if (candidate === form) {
+                        matches.push({
+                            v,
+                            t,
+                            p: s.i
+                        });
+                    }
+
+                });
+            });
+        });
+
+        return matches;
+    }
+
 
     let current = {};
     let totalQuestions = 0;
@@ -707,7 +811,7 @@
 
     function check() {
 
-        if (!current.v || !current.t) return;  // 👈 ADD THIS GUARD
+        if (!current.v || !current.t) return;
 
         const handler = ModeHandlers[currentMode];
         const result = handler.check(
@@ -719,11 +823,53 @@
 
         if (result.correct) {
             correctAnswers++;
-            document.getElementById("feedback").innerHTML =
-                "<span class='good'>Correct</span>";
+
+            if (currentMode === Modes.RECOGNITION && result.matches && result.matches.length > 1) {
+
+                const verb = document.getElementById("verbGuess").value;
+                const tense = getSelectedRadio("tenseRadio");
+                const person = getSelectedRadio("personRadio");
+
+                const alternatives = result.matches
+                    .filter(m =>
+                        !(m.v === verb &&
+                            m.t === tense &&
+                            String(m.p) === String(person))
+                    )
+                    .map(m => `${m.v} — ${tenseLabels[m.t]} — ${subjects[m.p].p}`)
+                    .join("<br>");
+
+                document.getElementById("feedback").innerHTML =
+                    `<span class='good'>Correct</span><br>
+                 <span class="meta">Also possible:<br>${alternatives}</span>`;
+            } else {
+                document.getElementById("feedback").innerHTML =
+                    "<span class='good'>Correct</span>";
+            }
+
         } else {
-            document.getElementById("feedback").innerHTML =
-                `<span class='bad'>Wrong → ${result.correctAnswer}</span>`;
+
+            // 🔴 THIS WAS MISSING
+
+            if (currentMode === Modes.RECOGNITION && result.matches && result.matches.length > 0) {
+
+                const solutions = result.matches
+                    .map(m => `${m.v} — ${tenseLabels[m.t]} — ${subjects[m.p].p}`)
+                    .join("<br>");
+
+                document.getElementById("feedback").innerHTML =
+                    `<span class='bad'>Incorrect</span><br>
+                 <span class="meta">Correct answer(s):<br>${solutions}</span>`;
+
+            } else {
+
+                // production mode
+                const correct = conjugate(current.v, current.t, current.s.i);
+
+                document.getElementById("feedback").innerHTML =
+                    `<span class='bad'>Incorrect</span><br>
+                 <span class="meta">Correct: ${correct}</span>`;
+            }
         }
 
         renderFullConjugation(current.v);
@@ -762,10 +908,10 @@
         let result;
 
         if (t === "perfecto") {
-            result = haber[p] + " " + participle(v);
+            result = haber[p] + " " + participle(base);
         }
         else if (t === "gerundio") {
-            result = estar[p] + " " + gerund(v);
+            result = estar[p] + " " + gerund(base);
         }
         else if (t === "futuro") {
             const endings = ["é","ás","á","emos","éis","án"];
@@ -873,7 +1019,15 @@
         const personDiv = document.getElementById("personRadios");
         personDiv.innerHTML = "";
 
-        subjects.forEach(s => {
+        const reordered = [];
+        const half = Math.ceil(subjects.length / 2);
+
+        for (let i = 0; i < half; i++) {
+            if (subjects[i]) reordered.push(subjects[i]);
+            if (subjects[i + half]) reordered.push(subjects[i + half]);
+        }
+
+        reordered.forEach(s => {
             const label = document.createElement("label");
 
             const rb = document.createElement("input");
@@ -940,12 +1094,15 @@
 
     function toggleTenseSelector() {
         const container = document.getElementById("tenseSelectorContainer");
+        const controls = document.getElementById("tenseControls");
 
         if (container.style.display === "none") {
             container.style.display = "grid";
+            controls.style.display = "flex";
             renderTenseSelector();
         } else {
             container.style.display = "none";
+            controls.style.display = "none";
         }
     }
 
