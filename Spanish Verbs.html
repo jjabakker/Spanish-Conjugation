@@ -161,6 +161,29 @@
             flex-wrap: wrap; /* optional: wraps nicely if screen is narrow */
         }
 
+        #topBar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #topBar button {
+            width: auto;
+            min-width: 170px;
+        }
+
+        #modeLabel {
+            font-size: 14px;
+            color: #555;
+            min-width: 100px;
+        }
+
+        #modeLabel {
+            font-size: 14px;
+            color: #555;
+        }
+
     </style>
 </head>
 
@@ -168,12 +191,15 @@
 
 <h2>Spanish Verb Trainer</h2>
 
-<button onclick="switchMode()">Switch Mode</button>
-<p id="modeLabel">Mode: production</p>
-
-<div id="selectionUI">
+<div id="topBar">
+    <button onclick="switchMode()">Mode</button>
+    <span id="modeLabel">production</span>
 
     <button onclick="toggleVerbSelector()">Select verbs</button>
+    <button onclick="toggleTenseSelector()">Select tenses</button>
+</div>
+
+<div id="selectionUI">
 
     <div id="verbControls" style="display:none;">
         <button onclick="selectAllVerbs()">All</button>
@@ -183,8 +209,6 @@
     </div>
 
     <div id="verbSelectorContainer" style="display:none;"></div>
-
-    <button onclick="toggleTenseSelector()">Select tenses</button>
 
     <div id="tenseControls" style="display:none;">
         <button onclick="selectAllTenses()">All</button>
@@ -219,7 +243,6 @@
 
 </div>
 <button onclick="check()">Check</button>
-
 
 
 <p id="feedback"></p>
@@ -847,9 +870,13 @@
                     "<span class='good'>Correct</span>";
             }
 
-        } else {
+        } else if (result.almost) {
 
-            // 🔴 THIS WAS MISSING
+            document.getElementById("feedback").innerHTML =
+                `<span style="color: orange;">Almost (accent issue)</span><br>
+         <span class="meta">Correct: ${result.correctAnswer}</span>`;
+
+        } else {
 
             if (currentMode === Modes.RECOGNITION && result.matches && result.matches.length > 0) {
 
@@ -872,6 +899,7 @@
             }
         }
 
+
         renderFullConjugation(current.v);
         updateCounter();
 
@@ -892,7 +920,7 @@
                 : Modes.PRODUCTION;
 
         document.getElementById("modeLabel").innerText =
-            "Mode: " + currentMode;
+            currentMode;
 
         updateUIForMode();
     }
